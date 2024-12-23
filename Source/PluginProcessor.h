@@ -3,7 +3,7 @@
 #include <JuceHeader.h>
 #include "SmartelectronixDisplay.h"
 
-class SmexoscopeAudioProcessor  : public juce::AudioProcessor
+class SmexoscopeAudioProcessor : public juce::AudioProcessor
 {
 public:
     SmexoscopeAudioProcessor();
@@ -11,11 +11,7 @@ public:
 
     void prepareToPlay(double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
-
-//TODO: change this
-#ifndef JucePlugin_PreferredChannelConfigurations
-    bool setPreferredBusArrangement(bool isInput, int bus, const juce::AudioChannelSet& preferredSet);
-#endif
+    bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
 
     void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
 

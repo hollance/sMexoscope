@@ -185,4 +185,3 @@ void SmexoscopeAudioProcessorEditor::updateParameters()
     speedText->setValue(pow(10.0, 2.5*intTrigSpeedKnob->getValue()-5)*sampleRate);
     threshText->setValue(pow(10.f, retrigThreshKnob->getValue()*4.f));
 }
-

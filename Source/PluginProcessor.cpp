@@ -70,30 +70,17 @@ void SmexoscopeAudioProcessor::releaseResources()
 {
 }
 
-#ifndef JucePlugin_PreferredChannelConfigurations
-bool SmexoscopeAudioProcessor::setPreferredBusArrangement (bool isInput, int bus, const juce::AudioChannelSet& preferredSet)
+bool SmexoscopeAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
 {
-    // Reject any bus arrangements that are not compatible with your plugin
-
-    const int numChannels = preferredSet.size();
-
-#if JucePlugin_IsMidiEffect
-    if (numChannels != 0)
+    if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
+    &&  layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo()) {
         return false;
-#elif JucePlugin_IsSynth
-    if (isInput || (numChannels != 1 && numChannels != 2))
+    }
+    if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet()) {
         return false;
-#else
-    if (numChannels != 1 && numChannels != 2)
-        return false;
-
-    if (! setPreferredBusArrangement (! isInput, bus, preferredSet))
-        return false;
-#endif
-
-    return setPreferredBusArrangement (isInput, bus, preferredSet);
+    }
+    return true;
 }
-#endif
 
 void SmexoscopeAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
