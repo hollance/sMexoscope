@@ -9,15 +9,16 @@
 class CustomKnob : public juce::Slider
 {
 public:
-    CustomKnob(const juce::Image& raw, bool vertical);
+    CustomKnob(const juce::Image& filmstrip, bool vertical);
 
     void paint(juce::Graphics& g) override;
 
 private:
-    int dimensions;
-    int numFrames;
-    bool isVertical;
-    juce::Image sequence;
+    juce::Image filmstrip;
+
+    int dimensions;   // width/height of a single frame
+    int numFrames;    // how many images in the filmstrip
+    bool isVertical;  // orientation of images in filmstrip
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CustomKnob)
 };

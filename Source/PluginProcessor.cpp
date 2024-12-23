@@ -47,16 +47,16 @@ int SmexoscopeAudioProcessor::getCurrentProgram()
     return 0;
 }
 
-void SmexoscopeAudioProcessor::setCurrentProgram(int index)
+void SmexoscopeAudioProcessor::setCurrentProgram(int)
 {
 }
 
-const juce::String SmexoscopeAudioProcessor::getProgramName(int index)
+const juce::String SmexoscopeAudioProcessor::getProgramName(int)
 {
     return {};
 }
 
-void SmexoscopeAudioProcessor::changeProgramName(int index, const juce::String& newName)
+void SmexoscopeAudioProcessor::changeProgramName(int, const juce::String&)
 {
 }
 
@@ -82,7 +82,7 @@ bool SmexoscopeAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts
     return true;
 }
 
-void SmexoscopeAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
+void SmexoscopeAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer&)
 {
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();

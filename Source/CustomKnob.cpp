@@ -1,28 +1,29 @@
 #include "CustomKnob.h"
 
-CustomKnob::CustomKnob(const juce::Image& raw, bool vertical) : isVertical(vertical), sequence(raw)
+CustomKnob::CustomKnob(const juce::Image& image, bool vertical) : filmstrip(image), isVertical(vertical)
 {
-    if (isVertical) {
-        dimensions = sequence.getWidth();
-        numFrames = sequence.getHeight() / sequence.getWidth();
-        if (sequence.getHeight() % sequence.getWidth() != 0) {
-            // error, wrong image dimensions.
-        }
+    setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+    setRange(0.0, 1.0, 0.0);
+    setTextBoxStyle(juce::Slider::NoTextBox, false, 90, 0);
+    setPopupDisplayEnabled(false, false, this);
+
+    if (vertical) {
+        dimensions = filmstrip.getWidth();
+        numFrames = filmstrip.getHeight() / filmstrip.getWidth();
+        jassert(filmstrip.getHeight() % filmstrip.getWidth() == 0);
     } else {
-        dimensions = sequence.getHeight();
-        numFrames = sequence.getWidth() / sequence.getHeight();
-        if (sequence.getWidth() % sequence.getHeight() != 0) {
-            // error, wrong image dimensions.
-        }
+        dimensions = filmstrip.getHeight();
+        numFrames = filmstrip.getWidth() / filmstrip.getHeight();
+        jassert(filmstrip.getWidth() % filmstrip.getHeight() == 0);
     }
 }
 
 void CustomKnob::paint(juce::Graphics& g)
 {
-    int index = (getValue()-getMinimum())/(getMaximum()-getMinimum())*(numFrames-1);
+    int index = int((getValue() - getMinimum())/(getMaximum() - getMinimum()) * (numFrames - 1));
     if (isVertical) {
-        g.drawImage(sequence, 0,0, dimensions, dimensions, 0, index*dimensions, dimensions, dimensions);
+        g.drawImage(filmstrip, 0, 0, dimensions, dimensions, 0, index*dimensions, dimensions, dimensions);
     } else {
-        g.drawImage(sequence, 0,0, dimensions, dimensions, index*dimensions, 0, dimensions, dimensions);
+        g.drawImage(filmstrip, 0, 0, dimensions, dimensions, index*dimensions, 0, dimensions, dimensions);
     }
 }

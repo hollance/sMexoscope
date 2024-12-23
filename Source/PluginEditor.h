@@ -8,7 +8,7 @@
 #include "CustomSlider.h"
 #include "JuceMultiStateButton.h"
 
-class SmexoscopeAudioProcessorEditor  : public juce::AudioProcessorEditor
+class SmexoscopeAudioProcessorEditor  : public juce::AudioProcessorEditor, private juce::Timer
 {
 public:
     SmexoscopeAudioProcessorEditor(SmexoscopeAudioProcessor&);
@@ -16,68 +16,45 @@ public:
 
     void paint(juce::Graphics&) override;
     void resized() override;
-    void updateParameters();
 
 //TODO: suspicious
     double sampleRate = 44100;
 
 private:
+    void timerCallback() override;
+    void updateParameters();
+
     SmexoscopeAudioProcessor& audioProcessor;
 
-    juce::Image background;
-    juce::Image heads;
-    juce::Image readout;
-    juce::Image tealKnob;
-    juce::Image retrigMode;
-    juce::Image leftRight;
-    juce::Image onOff;
-    juce::Image sliderNew;
+    juce::Image backgroundImage { juce::ImageCache::getFromMemory(BinaryData::body_png, BinaryData::body_pngSize) };
+    juce::Image headsImage { juce::ImageCache::getFromMemory(BinaryData::heads_png, BinaryData::heads_pngSize) };
+    juce::Image readoutImage { juce::ImageCache::getFromMemory(BinaryData::readout_png, BinaryData::readout_pngSize) };
+    juce::Image knobImage { juce::ImageCache::getFromMemory(BinaryData::blue_knob1_4_png, BinaryData::blue_knob1_4_pngSize) };
+    juce::Image retrigModeImage { juce::ImageCache::getFromMemory(BinaryData::free_etc_png, BinaryData::free_etc_pngSize) };
+    juce::Image leftRightImage { juce::ImageCache::getFromMemory(BinaryData::lefr_right_png, BinaryData::lefr_right_pngSize) };
+    juce::Image onOffImage { juce::ImageCache::getFromMemory(BinaryData::off_on_png, BinaryData::off_on_pngSize) };
+    juce::Image sliderImage { juce::ImageCache::getFromMemory(BinaryData::slider_new_png, BinaryData::slider_new_pngSize) };
 
-//TODO: why are these pointers?
-    CustomKnob* timeKnob;
-    CustomKnob* ampKnob;
-    CustomKnob* intTrigSpeedKnob;
-    CustomKnob* retrigThreshKnob;
+    CustomKnob timeKnob { knobImage, true };
+    CustomKnob ampKnob { knobImage, true };
+    CustomKnob intTrigSpeedKnob { knobImage, true };
+    CustomKnob retrigThreshKnob { knobImage, true };
 
-    CustomSlider* retrigLevelSlider;
+    CustomSlider retrigLevelSlider { sliderImage };
 
-    JuceMultiStateButton* retriggerModeButton;
-    JuceMultiStateButton* syncRedrawButton;
-    JuceMultiStateButton* freezeButton;
-    JuceMultiStateButton* dcKillButton;
-    JuceMultiStateButton* channelSelectionButton;
+//TODO rename to MultiStateButton
+    JuceMultiStateButton retriggerModeButton { retrigModeImage, true, 5 };
+    JuceMultiStateButton syncRedrawButton { onOffImage, true, 2 };
+    JuceMultiStateButton freezeButton { onOffImage, true, 2 };
+    JuceMultiStateButton dcKillButton { onOffImage, true, 2 };
+    JuceMultiStateButton channelSelectionButton { leftRightImage, true, 2 };
 
-    TextElement* timeText;
-    TextElement* ampText;
-    TextElement* speedText;
-    TextElement* threshText;
+    TextElement timeText;
+    TextElement ampText;
+    TextElement speedText;
+    TextElement threshText;
 
-    juce::Timer* timepoint;
-
-    CWaveDisplay* smexoscopeDisplay;
+    CWaveDisplay waveDisplay;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SmexoscopeAudioProcessorEditor)
-};
-
-// special timer used to update gui on a clock
-class ExoscopeRedrawTimer : public juce::Timer
-{
-public:
-    ExoscopeRedrawTimer(CWaveDisplay* target, SmexoscopeAudioProcessorEditor* editor)
-    {
-        smexoscopeDisplay = target;
-        this->editor = editor;
-    }
-
-    void timerCallback() override
-    {
-        smexoscopeDisplay->repaint();
-        editor->updateParameters();
-    }
-
-private:
-    CWaveDisplay* smexoscopeDisplay;
-    SmexoscopeAudioProcessorEditor* editor;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ExoscopeRedrawTimer)
 };

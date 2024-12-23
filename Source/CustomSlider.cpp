@@ -1,12 +1,17 @@
 #include "CustomSlider.h"
 
-CustomSlider::CustomSlider(const juce::Image& raw) : handle(raw)
+CustomSlider::CustomSlider(const juce::Image& image) : handleImage(image)
 {
-    // do nothing
+    setSliderStyle(juce::Slider::LinearBarVertical);
+    setRange(0.0, 1.0, 0.0);
+    setTextBoxStyle(juce::Slider::NoTextBox, false, 90, 0);
+    setPopupDisplayEnabled(false, false, this);
 }
 
 void CustomSlider::paint(juce::Graphics& g)
 {
     int offset = 267 - int(getValue() * 267);
-    g.drawImage(handle, 0, offset, handle.getWidth(), handle.getHeight(), 0, 0, handle.getWidth(), handle.getHeight());
+    int width = handleImage.getWidth();
+    int height = handleImage.getHeight();
+    g.drawImage(handleImage, 0, offset, width, height, 0, 0, width, height);
 }

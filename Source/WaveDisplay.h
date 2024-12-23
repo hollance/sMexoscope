@@ -6,8 +6,8 @@
 
 class CWaveDisplay : public juce::Component{
 public:
-    CWaveDisplay(juce::Rectangle<int>& size, CSmartelectronixDisplay* effect, juce::Image back, juce::Image heads, juce::Image readout, double sampleRate);
-    
+    CWaveDisplay(juce::Rectangle<int> size, CSmartelectronixDisplay* effect, juce::Image back, juce::Image heads, juce::Image readout, double sampleRate);
+
     virtual ~CWaveDisplay();
     
     virtual void paint(juce::Graphics& g) override;
@@ -24,7 +24,7 @@ public:
     
 protected:
     juce::Point<int> where;
-    juce::Rectangle<int>& size;
+    juce::Rectangle<int> size;
     
     CSmartelectronixDisplay* effect;
     

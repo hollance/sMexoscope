@@ -16,7 +16,7 @@
 //------------------------------------------------------------------------
 // CVuMeter
 //------------------------------------------------------------------------
-CWaveDisplay::CWaveDisplay(juce::Rectangle<int>& size, CSmartelectronixDisplay* effect, juce::Image back, juce::Image heads, juce::Image readout, double sampleRate)
+CWaveDisplay::CWaveDisplay(juce::Rectangle<int> size, CSmartelectronixDisplay* effect, juce::Image back, juce::Image heads, juce::Image readout, double sampleRate)
 : size(size)
 , effect(effect)
 , back(back)
