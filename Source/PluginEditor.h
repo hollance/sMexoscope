@@ -49,7 +49,7 @@ private:
     TextElement speedText;
     TextElement threshText;
 
-    CWaveDisplay waveDisplay;
+    WaveDisplay waveDisplay;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SmexoscopeAudioProcessorEditor)
 };

@@ -4,8 +4,7 @@
 SmexoscopeAudioProcessorEditor::SmexoscopeAudioProcessorEditor(SmexoscopeAudioProcessor& p) :
     juce::AudioProcessorEditor(&p),
     audioProcessor(p),
-    waveDisplay(juce::Rectangle<int>(36, 16, 627, 269), &audioProcessor.smexoscope, backgroundImage, headsImage, readoutImage, 44100.0)   //TODO: fix sample rate thing + this constructor takes too many parameters...
-        //TODO: audioProcessor.smexoscope
+    waveDisplay(audioProcessor.smexoscope, headsImage, readoutImage)
 {
 //TODO: handle this better
     timeKnob.setValue(audioProcessor.smexoscope.getParameter(Smexoscope::kTimeWindow));
