@@ -22,12 +22,8 @@ SmexoscopeAudioProcessorEditor::SmexoscopeAudioProcessorEditor(SmexoscopeAudioPr
     dcKillButton.setValue(audioProcessor.smexoscopeProcessing->getParameter(CSmartelectronixDisplay::kDCKill));
     channelSelectionButton.setValue(audioProcessor.smexoscopeProcessing->getParameter(CSmartelectronixDisplay::kChannel));
 
-    retriggerModeButton.setRange(0.0, 1.0f, 0.25f);
-    retriggerModeButton.setNumModes(4);  // TODO: maybe fix the image and pass this to ctor
-    syncRedrawButton.setRange(0.0, 1.0, 1.0);
-    freezeButton.setRange(0.0, 1.0, 1.0);
-    dcKillButton.setRange(0.0, 1.0, 1.0);
-    channelSelectionButton.setRange(0.0, 1.0, 1.0);
+    // Filmstrip has five images but we only use the top four.
+    retriggerModeButton.setNumStates(4);
 
     addAndMakeVisible(timeKnob, 2);
     addAndMakeVisible(timeText, 2);
@@ -97,11 +93,11 @@ void SmexoscopeAudioProcessorEditor::updateParameters()
     waveDisplay.setEffectParameter(CSmartelectronixDisplay::kAmpWindow, (float)ampKnob.getValue());
     waveDisplay.setEffectParameter(CSmartelectronixDisplay::kTriggerSpeed, (float)intTrigSpeedKnob.getValue());
     waveDisplay.setEffectParameter(CSmartelectronixDisplay::kTriggerLimit, (float)retrigThreshKnob.getValue());
-    waveDisplay.setEffectParameter(CSmartelectronixDisplay::kTriggerType, retriggerModeButton.getFloatValue());
-    waveDisplay.setEffectParameter(CSmartelectronixDisplay::kSyncDraw, syncRedrawButton.getFloatValue());
-    waveDisplay.setEffectParameter(CSmartelectronixDisplay::kFreeze, freezeButton.getFloatValue());
-    waveDisplay.setEffectParameter(CSmartelectronixDisplay::kDCKill, dcKillButton.getFloatValue());
-    waveDisplay.setEffectParameter(CSmartelectronixDisplay::kChannel, channelSelectionButton.getFloatValue());
+    waveDisplay.setEffectParameter(CSmartelectronixDisplay::kTriggerType, retriggerModeButton.getValue());
+    waveDisplay.setEffectParameter(CSmartelectronixDisplay::kSyncDraw, syncRedrawButton.getValue());
+    waveDisplay.setEffectParameter(CSmartelectronixDisplay::kFreeze, freezeButton.getValue());
+    waveDisplay.setEffectParameter(CSmartelectronixDisplay::kDCKill, dcKillButton.getValue());
+    waveDisplay.setEffectParameter(CSmartelectronixDisplay::kChannel, channelSelectionButton.getValue());
     waveDisplay.setEffectParameter(CSmartelectronixDisplay::kTriggerLevel, retrigLevelSlider.getValue());
 
     timeText.setValue(pow(10.f, -timeKnob.getValue()*5.f+1.5));

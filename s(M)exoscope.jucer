@@ -31,10 +31,10 @@
             file="Source/CustomSlider.cpp"/>
       <FILE id="rISvgO" name="CustomSlider.h" compile="0" resource="0" file="Source/CustomSlider.h"/>
       <FILE id="vFKwDM" name="Defines.h" compile="0" resource="0" file="Source/Defines.h"/>
-      <FILE id="baB4cK" name="JuceMultiStateButton.cpp" compile="1" resource="0"
-            file="Source/JuceMultiStateButton.cpp"/>
-      <FILE id="j3oZQK" name="JuceMultiStateButton.h" compile="0" resource="0"
-            file="Source/JuceMultiStateButton.h"/>
+      <FILE id="baB4cK" name="MultiStateButton.cpp" compile="1" resource="0"
+            file="Source/MultiStateButton.cpp"/>
+      <FILE id="j3oZQK" name="MultiStateButton.h" compile="0" resource="0"
+            file="Source/MultiStateButton.h"/>
       <FILE id="OQX02Y" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="Vr8amY" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>

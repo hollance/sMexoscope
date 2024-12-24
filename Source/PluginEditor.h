@@ -2,11 +2,11 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
-#include "WaveDisplay.h"
 #include "CustomKnob.h"
-#include "TextElement.h"
 #include "CustomSlider.h"
-#include "JuceMultiStateButton.h"
+#include "MultiStateButton.h"
+#include "TextElement.h"
+#include "WaveDisplay.h"
 
 class SmexoscopeAudioProcessorEditor  : public juce::AudioProcessorEditor, private juce::Timer
 {
@@ -42,12 +42,11 @@ private:
 
     CustomSlider retrigLevelSlider { sliderImage };
 
-//TODO rename to MultiStateButton
-    JuceMultiStateButton retriggerModeButton { retrigModeImage, true, 5 };
-    JuceMultiStateButton syncRedrawButton { onOffImage, true, 2 };
-    JuceMultiStateButton freezeButton { onOffImage, true, 2 };
-    JuceMultiStateButton dcKillButton { onOffImage, true, 2 };
-    JuceMultiStateButton channelSelectionButton { leftRightImage, true, 2 };
+    MultiStateButton retriggerModeButton { retrigModeImage, true, 5 };
+    MultiStateButton syncRedrawButton { onOffImage, true, 2 };
+    MultiStateButton freezeButton { onOffImage, true, 2 };
+    MultiStateButton dcKillButton { onOffImage, true, 2 };
+    MultiStateButton channelSelectionButton { leftRightImage, true, 2 };
 
     TextElement timeText;
     TextElement ampText;
