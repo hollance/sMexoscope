@@ -16,7 +16,7 @@
 //------------------------------------------------------------------------
 // CVuMeter
 //------------------------------------------------------------------------
-CWaveDisplay::CWaveDisplay(juce::Rectangle<int> size, CSmartelectronixDisplay* effect, juce::Image back, juce::Image heads, juce::Image readout, double sampleRate)
+CWaveDisplay::CWaveDisplay(juce::Rectangle<int> size, Smexoscope* effect, juce::Image back, juce::Image heads, juce::Image readout, double sampleRate)
 : size(size)
 , effect(effect)
 , back(back)
@@ -29,7 +29,7 @@ CWaveDisplay::CWaveDisplay(juce::Rectangle<int> size, CSmartelectronixDisplay* e
     display = rand() % 4;
     
     // link this display to our data block so we can communicate and get data
-    effect->linkDisplay(this);
+//TODO    effect->linkDisplay(this);
     
     // set saved mouse position to something invalid so crosshairs don't appear by default.
     where.x = -1;
@@ -116,10 +116,10 @@ void CWaveDisplay::paint(juce::Graphics& g)
     g.setOpacity(1.0f);
     
     // trig-line, grey
-    long triggerType = (long)(effect->getParameter(CSmartelectronixDisplay::kTriggerType) * CSmartelectronixDisplay::kNumTriggerTypes + 0.0001);
+    long triggerType = (long)(effect->getParameter(Smexoscope::kTriggerType) * Smexoscope::kNumTriggerTypes + 0.0001);
     
-    if (triggerType == CSmartelectronixDisplay::kTriggerRising || triggerType == CSmartelectronixDisplay::kTriggerFalling) {
-        long y = 1 + (long)((1.f - effect->getParameter(CSmartelectronixDisplay::kTriggerLevel)) * (size.getHeight() - 2));
+    if (triggerType == Smexoscope::kTriggerRising || triggerType == Smexoscope::kTriggerFalling) {
+        long y = 1 + (long)((1.f - effect->getParameter(Smexoscope::kTriggerLevel)) * (size.getHeight() - 2));
         
         g.setColour(juce::Colour(229, 229, 229));
         g.drawHorizontalLine(y, 0, size.getWidth() - 1);
@@ -130,8 +130,8 @@ void CWaveDisplay::paint(juce::Graphics& g)
     g.drawLine(0, size.getHeight() * 0.5 - 1, size.getWidth() - 1, size.getHeight() * 0.5 - 1);
     
     
-    const std::vector<juce::Point<int>>& points = (effect->getParameter(CSmartelectronixDisplay::kSyncDraw) > 0.5f) ? effect->getCopy() : effect->getPeaks();
-    double counterSpeedInverse = pow(10.f, effect->getParameter(CSmartelectronixDisplay::kTimeWindow) * 5.f - 1.5);
+    const std::vector<juce::Point<int>>& points = (effect->getParameter(Smexoscope::kSyncDraw) > 0.5f) ? effect->getCopy() : effect->getPeaks();
+    double counterSpeedInverse = pow(10.f, effect->getParameter(Smexoscope::kTimeWindow) * 5.f - 1.5);
     // waveform
     if (counterSpeedInverse < 1.0) //draw interpolated lines!
     {
@@ -187,7 +187,7 @@ void CWaveDisplay::paint(juce::Graphics& g)
         g.drawVerticalLine(where.x, 0, size.getHeight() - 1);
         
         // get x and y coordinates scaled for measurement purposes.
-        float gain = powf(10.f, effect->getParameter(CSmartelectronixDisplay::kAmpWindow) * 6.f - 3.f);
+        float gain = powf(10.f, effect->getParameter(Smexoscope::kAmpWindow) * 6.f - 3.f);
         float y = (-2.f * ((float)where.y + 1.f) / (float)OSC_HEIGHT + 1.f) / gain;
         float x = (float)where.x * (float)counterSpeedInverse;
         char text[256];

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "SmartelectronixDisplay.h"
+#include "Smexoscope.h"
 
 class SmexoscopeAudioProcessor : public juce::AudioProcessor
 {
@@ -34,11 +34,7 @@ public:
     void getStateInformation(juce::MemoryBlock& destData) override;
     void setStateInformation(const void* data, int sizeInBytes) override;
 
-//TODO: private?
-    CSmartelectronixDisplay* smexoscopeProcessing;
-
-//TODO: suspicious
-    double sampleRate = 44100;
+    Smexoscope smexoscope;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SmexoscopeAudioProcessor)

@@ -5,7 +5,6 @@ SmexoscopeAudioProcessor::SmexoscopeAudioProcessor()
     : AudioProcessor(BusesProperties().withInput("Input", juce::AudioChannelSet::stereo(), true)
                                       .withOutput("Output", juce::AudioChannelSet::stereo(), true))
 {
-    smexoscopeProcessing = new CSmartelectronixDisplay();
 }
 
 SmexoscopeAudioProcessor::~SmexoscopeAudioProcessor()
@@ -60,10 +59,9 @@ void SmexoscopeAudioProcessor::changeProgramName(int, const juce::String&)
 {
 }
 
-void SmexoscopeAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
+void SmexoscopeAudioProcessor::prepareToPlay(double sampleRate, int)
 {
-    this->sampleRate = sampleRate;
-    smexoscopeProcessing->setSampleRate(this->sampleRate);
+    smexoscope.prepareToPlay(sampleRate);
 }
 
 void SmexoscopeAudioProcessor::releaseResources()
@@ -92,7 +90,7 @@ void SmexoscopeAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, ju
         buffer.clear(i, 0, buffer.getNumSamples());
     }
 
-    smexoscopeProcessing->processSub(&buffer,1);
+    smexoscope.process(buffer);
 }
 
 bool SmexoscopeAudioProcessor::hasEditor() const
@@ -107,13 +105,13 @@ juce::AudioProcessorEditor* SmexoscopeAudioProcessor::createEditor()
 
 void SmexoscopeAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
 {
-    destData.setSize(sizeof(float)*CSmartelectronixDisplay::kNumParams);
-    destData.copyFrom(smexoscopeProcessing->getSaveBlock(), 0, sizeof(float)*CSmartelectronixDisplay::kNumParams);
+    destData.setSize(smexoscope.getSaveBlockSize());
+    destData.copyFrom(smexoscope.getSaveBlock(), 0, smexoscope.getSaveBlockSize());
 }
 
-void SmexoscopeAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
+void SmexoscopeAudioProcessor::setStateInformation(const void* data, int)
 {
-    std::memcpy(smexoscopeProcessing->getSaveBlock(), data, sizeof(float)*CSmartelectronixDisplay::kNumParams);
+    std::memcpy(smexoscope.getSaveBlock(), data, smexoscope.getSaveBlockSize());
 }
 
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()

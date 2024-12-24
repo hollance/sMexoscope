@@ -12,13 +12,9 @@ class SmexoscopeAudioProcessorEditor  : public juce::AudioProcessorEditor, priva
 {
 public:
     SmexoscopeAudioProcessorEditor(SmexoscopeAudioProcessor&);
-    ~SmexoscopeAudioProcessorEditor() override;
 
     void paint(juce::Graphics&) override;
     void resized() override;
-
-//TODO: suspicious
-    double sampleRate = 44100;
 
 private:
     void timerCallback() override;

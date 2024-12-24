@@ -4,25 +4,22 @@
 SmexoscopeAudioProcessorEditor::SmexoscopeAudioProcessorEditor(SmexoscopeAudioProcessor& p) :
     juce::AudioProcessorEditor(&p),
     audioProcessor(p),
-    waveDisplay(juce::Rectangle<int>(36, 16, 627, 269), audioProcessor.smexoscopeProcessing, backgroundImage, headsImage, readoutImage, 44100.0)   //TODO: fix sample rate thing + this constructor takes too many parameters...
-        //TODO: audioProcessor.smexoscopeProcessing
+    waveDisplay(juce::Rectangle<int>(36, 16, 627, 269), &audioProcessor.smexoscope, backgroundImage, headsImage, readoutImage, 44100.0)   //TODO: fix sample rate thing + this constructor takes too many parameters...
+        //TODO: audioProcessor.smexoscope
 {
-//TODO: suspicious
-    this->sampleRate = p.sampleRate;
-
 //TODO: handle this better
-    timeKnob.setValue(audioProcessor.smexoscopeProcessing->getParameter(CSmartelectronixDisplay::kTimeWindow));
-    ampKnob.setValue(audioProcessor.smexoscopeProcessing->getParameter(CSmartelectronixDisplay::kAmpWindow));
-    intTrigSpeedKnob.setValue(audioProcessor.smexoscopeProcessing->getParameter(CSmartelectronixDisplay::kTriggerSpeed));
-    retrigThreshKnob.setValue(audioProcessor.smexoscopeProcessing->getParameter(CSmartelectronixDisplay::kTriggerLimit));
-    retrigLevelSlider.setValue(audioProcessor.smexoscopeProcessing->getParameter(CSmartelectronixDisplay::kTriggerLevel));
-    retriggerModeButton.setValue(audioProcessor.smexoscopeProcessing->getParameter(CSmartelectronixDisplay::kTriggerType));
-    syncRedrawButton.setValue(audioProcessor.smexoscopeProcessing->getParameter(CSmartelectronixDisplay::kSyncDraw));
-    freezeButton.setValue(audioProcessor.smexoscopeProcessing->getParameter(CSmartelectronixDisplay::kFreeze));
-    dcKillButton.setValue(audioProcessor.smexoscopeProcessing->getParameter(CSmartelectronixDisplay::kDCKill));
-    channelSelectionButton.setValue(audioProcessor.smexoscopeProcessing->getParameter(CSmartelectronixDisplay::kChannel));
+    timeKnob.setValue(audioProcessor.smexoscope.getParameter(Smexoscope::kTimeWindow));
+    ampKnob.setValue(audioProcessor.smexoscope.getParameter(Smexoscope::kAmpWindow));
+    intTrigSpeedKnob.setValue(audioProcessor.smexoscope.getParameter(Smexoscope::kTriggerSpeed));
+    retrigThreshKnob.setValue(audioProcessor.smexoscope.getParameter(Smexoscope::kTriggerLimit));
+    retrigLevelSlider.setValue(audioProcessor.smexoscope.getParameter(Smexoscope::kTriggerLevel));
+    retriggerModeButton.setValue(audioProcessor.smexoscope.getParameter(Smexoscope::kTriggerType));
+    syncRedrawButton.setValue(audioProcessor.smexoscope.getParameter(Smexoscope::kSyncDraw));
+    freezeButton.setValue(audioProcessor.smexoscope.getParameter(Smexoscope::kFreeze));
+    dcKillButton.setValue(audioProcessor.smexoscope.getParameter(Smexoscope::kDCKill));
+    channelSelectionButton.setValue(audioProcessor.smexoscope.getParameter(Smexoscope::kChannel));
 
-    // Filmstrip has five images but we only use the top four.
+    // Filmstrip has 5 images but External triggering mode is not implemented.
     retriggerModeButton.setNumStates(4);
 
     addAndMakeVisible(timeKnob, 2);
@@ -43,11 +40,6 @@ SmexoscopeAudioProcessorEditor::SmexoscopeAudioProcessorEditor(SmexoscopeAudioPr
 
     setSize(825, 300);
     startTimerHz(30);
-}
-
-SmexoscopeAudioProcessorEditor::~SmexoscopeAudioProcessorEditor()
-{
-    // do nothing
 }
 
 void SmexoscopeAudioProcessorEditor::paint(juce::Graphics& g)
@@ -89,17 +81,21 @@ void SmexoscopeAudioProcessorEditor::timerCallback()
 
 void SmexoscopeAudioProcessorEditor::updateParameters()
 {
-    waveDisplay.setEffectParameter(CSmartelectronixDisplay::kTimeWindow, (float)timeKnob.getValue());
-    waveDisplay.setEffectParameter(CSmartelectronixDisplay::kAmpWindow, (float)ampKnob.getValue());
-    waveDisplay.setEffectParameter(CSmartelectronixDisplay::kTriggerSpeed, (float)intTrigSpeedKnob.getValue());
-    waveDisplay.setEffectParameter(CSmartelectronixDisplay::kTriggerLimit, (float)retrigThreshKnob.getValue());
-    waveDisplay.setEffectParameter(CSmartelectronixDisplay::kTriggerType, retriggerModeButton.getValue());
-    waveDisplay.setEffectParameter(CSmartelectronixDisplay::kSyncDraw, syncRedrawButton.getValue());
-    waveDisplay.setEffectParameter(CSmartelectronixDisplay::kFreeze, freezeButton.getValue());
-    waveDisplay.setEffectParameter(CSmartelectronixDisplay::kDCKill, dcKillButton.getValue());
-    waveDisplay.setEffectParameter(CSmartelectronixDisplay::kChannel, channelSelectionButton.getValue());
-    waveDisplay.setEffectParameter(CSmartelectronixDisplay::kTriggerLevel, retrigLevelSlider.getValue());
+    waveDisplay.setEffectParameter(Smexoscope::kTimeWindow, float(timeKnob.getValue()));
+    waveDisplay.setEffectParameter(Smexoscope::kAmpWindow, float(ampKnob.getValue()));
+    waveDisplay.setEffectParameter(Smexoscope::kTriggerSpeed, float(intTrigSpeedKnob.getValue()));
+    waveDisplay.setEffectParameter(Smexoscope::kTriggerLimit, float(retrigThreshKnob.getValue()));
+    waveDisplay.setEffectParameter(Smexoscope::kTriggerType, retriggerModeButton.getValue());
+    waveDisplay.setEffectParameter(Smexoscope::kSyncDraw, syncRedrawButton.getValue());
+    waveDisplay.setEffectParameter(Smexoscope::kFreeze, freezeButton.getValue());
+    waveDisplay.setEffectParameter(Smexoscope::kDCKill, dcKillButton.getValue());
+    waveDisplay.setEffectParameter(Smexoscope::kChannel, channelSelectionButton.getValue());
+    waveDisplay.setEffectParameter(Smexoscope::kTriggerLevel, float(retrigLevelSlider.getValue()));
 
+//TODO: not thread safe
+    double sampleRate = audioProcessor.smexoscope.getSampleRate();
+
+//TODO: fix warnings
     timeText.setValue(pow(10.f, -timeKnob.getValue()*5.f+1.5));
     ampText.setValue(powf(10.f, ampKnob.getValue()*6.f-3.f));
     speedText.setValue(pow(10.0, 2.5*intTrigSpeedKnob.getValue()-5)*sampleRate);

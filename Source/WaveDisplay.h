@@ -2,11 +2,11 @@
 
 #include "Defines.h"
 #include <JuceHeader.h>
-#include "SmartelectronixDisplay.h"
+#include "Smexoscope.h"
 
 class CWaveDisplay : public juce::Component{
 public:
-    CWaveDisplay(juce::Rectangle<int> size, CSmartelectronixDisplay* effect, juce::Image back, juce::Image heads, juce::Image readout, double sampleRate);
+    CWaveDisplay(juce::Rectangle<int> size, Smexoscope* effect, juce::Image back, juce::Image heads, juce::Image readout, double sampleRate);
 
     virtual ~CWaveDisplay();
     
@@ -26,7 +26,7 @@ protected:
     juce::Point<int> where;
     juce::Rectangle<int> size;
     
-    CSmartelectronixDisplay* effect;
+    Smexoscope* effect;
     
     juce::Image back;
     juce::Image heads;

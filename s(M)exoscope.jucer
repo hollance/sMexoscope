@@ -42,10 +42,8 @@
             file="Source/PluginProcessor.cpp"/>
       <FILE id="DApdpv" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
-      <FILE id="Mta5uC" name="SmartelectronixDisplay.cpp" compile="1" resource="0"
-            file="Source/SmartelectronixDisplay.cpp"/>
-      <FILE id="k0ESLi" name="SmartelectronixDisplay.h" compile="0" resource="0"
-            file="Source/SmartelectronixDisplay.h"/>
+      <FILE id="Mta5uC" name="Smexoscope.cpp" compile="1" resource="0" file="Source/Smexoscope.cpp"/>
+      <FILE id="k0ESLi" name="Smexoscope.h" compile="0" resource="0" file="Source/Smexoscope.h"/>
       <FILE id="KPWupg" name="TextElement.cpp" compile="1" resource="0" file="Source/TextElement.cpp"/>
       <FILE id="fXAH6o" name="TextElement.h" compile="0" resource="0" file="Source/TextElement.h"/>
       <FILE id="Ea4Dwa" name="WaveDisplay.cpp" compile="1" resource="0" file="Source/WaveDisplay.cpp"/>

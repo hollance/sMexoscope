@@ -7,6 +7,7 @@
 
 #define OSC_WIDTH 627
 #define OSC_HEIGHT 269
+#define OSC_CENTER (OSC_HEIGHT / 2)
 
 inline float clip(float x, float max = 1.0f)
 {
