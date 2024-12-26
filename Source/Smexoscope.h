@@ -53,14 +53,17 @@ public:
 
     double getSampleRate() const { return sampleRate; }
 
-    const std::vector<juce::Point<int>>& getPeaks() const { return peaks; }
-    const std::vector<juce::Point<int>>& getCopy() const { return copy; }
+    // The array stores two readings for every pixel in the oscilloscope.
+    using PeaksArray = std::array<juce::Point<int>, OSC_WIDTH * 2>;
+
+    const PeaksArray& getPeaks() const { return peaks; }
+    const PeaksArray& getCopy() const { return copy; }
 
 protected:
-    // Array containing the waveform readings. The `copy` array is only
-    // updated when the trigger hits and is used in Sync Redraw mode.
-    std::vector<juce::Point<int>> peaks;
-    std::vector<juce::Point<int>> copy;
+    // Array containing the waveform readings. The `copy` array is used
+    // for Sync Redraw mode and is only updated when the trigger hits.
+    PeaksArray peaks;
+    PeaksArray copy;
 
     // Current write position into the peaks array.
     size_t index;

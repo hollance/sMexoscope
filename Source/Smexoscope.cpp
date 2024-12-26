@@ -3,15 +3,12 @@
 
 Smexoscope::Smexoscope()
 {
-    for (int j = 0; j < OSC_WIDTH * 2; j += 2) {
+    for (size_t j = 0; j < peaks.size(); ++j) {
         juce::Point<int> tmp;
-        tmp.x = j / 2;
+        tmp.x = int(j / 2);
         tmp.y = OSC_CENTER - 1;
-
-        peaks.push_back(tmp);
-        peaks.push_back(tmp);
-        copy.push_back(tmp);
-        copy.push_back(tmp);
+        peaks[j] = tmp;
+        copy[j] = tmp;
     }
 
     setParameter(kTriggerSpeed, 0.5f);

@@ -94,7 +94,7 @@ void WaveDisplay::paint(juce::Graphics& g)
     g.setColour(juce::Colour(179, 111, 56));
     g.drawLine(0, bounds.getHeight()/2 - 1, bounds.getWidth() - 1, bounds.getHeight()/2 - 1);
 
-    const std::vector<juce::Point<int>>& points = (effect.getParameter(Smexoscope::kSyncDraw) > 0.5f) ? effect.getCopy() : effect.getPeaks();
+    const auto& points = (effect.getParameter(Smexoscope::kSyncDraw) > 0.5f) ? effect.getCopy() : effect.getPeaks();
 
 //TODO what is going on here?
 // when we have fewer readings than fit into the screen, draw interpolated lines
