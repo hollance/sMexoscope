@@ -15,24 +15,22 @@ public:
     void mouseDrag(const juce::MouseEvent& event) override;
     void mouseUp(const juce::MouseEvent& event) override;
 
-    void setEffectParameter(int index, float value);
-
 private:
-    // custom draw function to draw an aliased line
-    void drawAliasedLine(juce::Graphics& g, int x1, int y1, int x2, int y2);
-
     Smexoscope& effect;
 
-    juce::Point<int> where;
-    juce::Rectangle<int> size;
+    juce::Image headsImage;
+    juce::Image readoutImage;
 
-    juce::Image heads;
-    juce::Image readout;
+    // Position of the crosshairs.
+    juce::Point<int> where;
+
+    // Which head image to draw (randomly chosen).
+    int headIndex = 0;
 
 //TODO was passed in through ctor, use better method
     double sampleRate = 44100.0;
 
-    unsigned char display;
+    char text[256] = { 0 };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WaveDisplay)
 };

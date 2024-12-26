@@ -8,7 +8,7 @@
 #include "TextElement.h"
 #include "WaveDisplay.h"
 
-class SmexoscopeAudioProcessorEditor  : public juce::AudioProcessorEditor, private juce::Timer
+class SmexoscopeAudioProcessorEditor : public juce::AudioProcessorEditor, private juce::Timer
 {
 public:
     SmexoscopeAudioProcessorEditor(SmexoscopeAudioProcessor&);
@@ -21,6 +21,7 @@ private:
     void updateParameters();
 
     SmexoscopeAudioProcessor& audioProcessor;
+    Smexoscope& effect;
 
     juce::Image backgroundImage { juce::ImageCache::getFromMemory(BinaryData::body_png, BinaryData::body_pngSize) };
     juce::Image headsImage { juce::ImageCache::getFromMemory(BinaryData::heads_png, BinaryData::heads_pngSize) };

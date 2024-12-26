@@ -1,115 +1,108 @@
 #include <JuceHeader.h>
 #include "WaveDisplay.h"
-//#include "math.h"
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <time.h>
 
-// this is a quick little helper function needed for text readout.
+// Convert linear gain to decibels.
 static inline float cf_lin2db(float lin)
 {
-    if (lin < 9e-51)
-        return -1000.f; /* prevent invalid operation */
-    return 20.f * log10f(lin);
-}
-
-WaveDisplay::WaveDisplay(Smexoscope& effect, juce::Image heads, juce::Image readout)
-    : size(size), effect(effect), heads(heads), readout(readout)
-{
-    // this is the magic that selects which smartelectronix head to display in the corner of the wave display.
-    srand((unsigned)time(NULL));
-    display = rand() % 4;
-
-    // set saved mouse position to something invalid so crosshairs don't appear by default.
-    where.x = -1;
-}
-
-void WaveDisplay::drawAliasedLine(juce::Graphics& g, int x1, int y1, int x2, int y2)
-{
-    if (y2 > y1)
-        g.fillRect(x1, y1, 1, y2-y1);
-    else if (y1 > y2)
-        g.fillRect(x1, y2, 1, y1-y2);
-    else
-        g.fillRect(x1, y1, 1, 1);
-}
-
-// basic setter to change saved parameter values from UI elements.
-void WaveDisplay::setEffectParameter(int index, float value)
-{
-    effect.setParameter(index, value);
-}
-
-// handle mouse clicking waveform display
-void WaveDisplay::mouseDown(const juce::MouseEvent &event)
-{
-    if (event.mods.isLeftButtonDown() && event.originalComponent == this)
-        this->where = event.getPosition();
-}
-
-// handle mouse draging over waveform display
-void WaveDisplay::mouseDrag(const juce::MouseEvent &event)
-{
-    if (event.mods.isLeftButtonDown() && event.originalComponent == this)
-    {
-        // set position
-        this->where = event.getPosition();
-
-        // update such that position is limited to plugin bounds
-        if (event.getPosition().x < 0)
-            this->where.setX(0);
-        else if(event.getPosition().x > size.getWidth())
-            this->where.setX(size.getWidth()-1);
-        if(event.getPosition().y < 0)
-            this->where.setY(0);
-        else if (event.getPosition().y > size.getHeight())
-            this->where.setY(size.getHeight()-1);
+    if (double(lin) < 9e-51) {
+        return -1000.0f;  // prevent invalid operation
+    } else {
+        return 20.0f * std::log10(lin);
     }
 }
 
-// handle mouse release over waveform display
-void WaveDisplay::mouseUp(const juce::MouseEvent &event)
+// Draws a vertical line that is one pixel wide without anti-aliasing.
+static void drawAliasedLine(juce::Graphics& g, int x1, int y1, int y2)
 {
-    // crosshairs "stick" until you right click
-    if (event.mods.isRightButtonDown() && event.originalComponent == this)
-        this->where.x = -1;
+    if (y2 > y1) {
+        g.fillRect(x1, y1, 1, y2 - y1);
+    } else if (y1 > y2) {
+        g.fillRect(x1, y2, 1, y1 - y2);
+    } else {
+        g.fillRect(x1, y1, 1, 1);
+    }
+}
+
+WaveDisplay::WaveDisplay(Smexoscope& smexoscope, juce::Image heads, juce::Image readout)
+    : effect(smexoscope), headsImage(heads), readoutImage(readout)
+{
+    // This is the magic that selects which smartelectronix head to display
+    // in the corner of the wave display.
+    juce::Random rng;
+    rng.setSeedRandomly();
+    headIndex = rng.nextInt(4);
+
+    // Set so crosshairs don't appear by default.
+    where.x = -1;
+}
+
+void WaveDisplay::mouseDown(const juce::MouseEvent& event)
+{
+    if (event.mods.isLeftButtonDown() && event.originalComponent == this) {
+        where = event.getPosition();
+    }
+}
+
+void WaveDisplay::mouseDrag(const juce::MouseEvent& event)
+{
+    if (event.mods.isLeftButtonDown() && event.originalComponent == this) {
+        where = event.getPosition();
+
+        // Limit the position to plug-in bounds.
+        auto bounds = getLocalBounds();
+        if (event.getPosition().x < 0) {
+            where.setX(0);
+        } else if (event.getPosition().x > bounds.getWidth()) {
+            where.setX(bounds.getWidth() - 1);
+        }
+        if (event.getPosition().y < 0) {
+            where.setY(0);
+        } else if (event.getPosition().y > bounds.getHeight()) {
+            where.setY(bounds.getHeight() - 1);
+        }
+    }
+}
+
+void WaveDisplay::mouseUp(const juce::MouseEvent& event)
+{
+    // Crosshairs "stick" until you right-click.
+    if (event.mods.isRightButtonDown() && event.originalComponent == this) {
+        where.x = -1;
+    }
 }
 
 void WaveDisplay::paint(juce::Graphics& g)
 {
-    ///////////////////////////////////////////////////////
-    // these are all the draw calls for the wave display //
-    ///////////////////////////////////////////////////////
-    //  offset of the waveform display should be 38, 16  //
+    // Note: Offset of the waveform display should be (38, 16) pixels.
 
-    // draw a random face because why not
-    g.drawImage(heads, 579, 224, 46, 45, 0, display*(heads.getHeight()/4), 46, 45);
+    auto bounds = getLocalBounds();
 
-    // just in case somebody was messing with opacity
+    // Draw a random face because why not.
     g.setOpacity(1.0f);
+    g.drawImage(headsImage, 579, 224, 46, 45, 0, headIndex * (headsImage.getHeight() / 4), 46, 45);
 
-    // trig-line, grey
-    long triggerType = (long)(effect.getParameter(Smexoscope::kTriggerType) * Smexoscope::kNumTriggerTypes + 0.0001);
-
+    // Draw a grey trigger line when the mode is Rising or Falling.
+    int triggerType = int(effect.getParameter(Smexoscope::kTriggerType) * Smexoscope::kNumTriggerTypes + 0.0001f);
     if (triggerType == Smexoscope::kTriggerRising || triggerType == Smexoscope::kTriggerFalling) {
-        long y = 1 + (long)((1.f - effect.getParameter(Smexoscope::kTriggerLevel)) * (size.getHeight() - 2));
-
+//TODO: describe
+        int y = 1 + int((1.0f - effect.getParameter(Smexoscope::kTriggerLevel)) * (bounds.getHeight() - 2));
         g.setColour(juce::Colour(229, 229, 229));
-        g.drawHorizontalLine(y, 0, size.getWidth() - 1);
+        g.drawHorizontalLine(y, 0, bounds.getWidth() - 1);
     }
 
-    // zero-line, orange
+    // Draw the zero line in orange.
     g.setColour(juce::Colour(179, 111, 56));
-    g.drawLine(0, size.getHeight() * 0.5 - 1, size.getWidth() - 1, size.getHeight() * 0.5 - 1);
-
+    g.drawLine(0, bounds.getHeight()/2 - 1, bounds.getWidth() - 1, bounds.getHeight()/2 - 1);
 
     const std::vector<juce::Point<int>>& points = (effect.getParameter(Smexoscope::kSyncDraw) > 0.5f) ? effect.getCopy() : effect.getPeaks();
-    double counterSpeedInverse = pow(10.f, effect.getParameter(Smexoscope::kTimeWindow) * 5.f - 1.5);
+
+//TODO what is going on here?
+// when we have fewer readings than fit into the screen, draw interpolated lines
     // waveform
-    if (counterSpeedInverse < 1.0) //draw interpolated lines!
-    {
+    double counterSpeedInverse = pow(10.0f, effect.getParameter(Smexoscope::kTimeWindow) * 5.0f - 1.5f);
+    if (counterSpeedInverse < 1.0) {  //draw interpolated lines!
         // set color to blue
-        g.setColour(juce::Colour(64, 148, 172));
+        g.setColour(juce::Colour(64, 148, 172));  // blue
 
         double phase = counterSpeedInverse;
         double dphase = counterSpeedInverse;
@@ -117,8 +110,8 @@ void WaveDisplay::paint(juce::Graphics& g)
         double prevxi = points[0].x;
         double prevyi = points[0].y;
 
-        for (long i = 1; i < size.getWidth() - 1; i++) {
-            long index = (long)phase;
+        for (int i = 1; i < bounds.getWidth() - 1; ++i) {
+            size_t index = (size_t)phase;
             double alpha = phase - (double)index;
 
             double xi = i;
@@ -126,86 +119,76 @@ void WaveDisplay::paint(juce::Graphics& g)
 
             // this line is renderd with AA, so it looks different (arguably better?) from the original s(M)exoscope.
             // use fillRectangle to solve.
-            g.drawLine(prevxi, prevyi, xi, yi, 1.0f);
+            g.drawLine(float(prevxi), float(prevyi), float(xi), float(yi), 1.0f);
             prevxi = xi;
             prevyi = yi;
 
             phase += dphase;
         }
     } else {
-        // set color to grey
-        g.setColour(juce::Colour(118, 118, 118));
+        // When we get here, there is one reading for every pixel in the oscilloscope,
+        // so draw a vertical line at every location.
 
-        juce::Point<int> p1, p2;
-        for (unsigned int i=0; i<points.size()-1; i++)
-        {
-            p1 = points[i];
-            p2 = points[i+1];
+        g.setColour(juce::Colour(118, 118, 118));  // grey
+
+        for (size_t i = 0; i < points.size() - 1; ++i) {
+            auto p1 = points[i];
+            auto p2 = points[i + 1];
             // we use drawAliasedLine because if we draw lines with AA we get nasty semi-transparent
             // blocks instead of solid color when the waveform is dense.
-            drawAliasedLine(g, p1.x, p1.y, p2.x, p2.y);
+            drawAliasedLine(g, p1.x, p1.y, p2.y);
         }
     }
 
-    // BRAM: TODO clean this mess up...
-    // ARMANDO: doesn't look that bad to me...
-
     // if we have a valid mouse location for displaying crosshairs and more info...
     if (where.x != -1) {
-
+        // Draw crosshairs for mouse.
         g.setColour(juce::Colour(10, 10, 10));
+        g.drawHorizontalLine(where.y, 0, bounds.getWidth() - 1);
+        g.drawVerticalLine(where.x, 0, bounds.getHeight() - 1);
 
-        // draw crosshairs for mouse
-        g.drawHorizontalLine(where.y, 0, size.getWidth() - 1);
-        g.drawVerticalLine(where.x, 0, size.getHeight() - 1);
-
+//TODO: describe math
         // get x and y coordinates scaled for measurement purposes.
-        float gain = powf(10.f, effect.getParameter(Smexoscope::kAmpWindow) * 6.f - 3.f);
-        float y = (-2.f * ((float)where.y + 1.f) / (float)OSC_HEIGHT + 1.f) / gain;
-        float x = (float)where.x * (float)counterSpeedInverse;
-        char text[256];
+        float gain = powf(10.0f, effect.getParameter(Smexoscope::kAmpWindow) * 6.0f - 3.0f);
+        float y = (-2.0f * (float(where.y) + 1.0f) / float(OSC_HEIGHT) + 1.0f) / gain;
+        float x = float(where.x) * float(counterSpeedInverse);
 
-        long lineSize = 10;
+        const int lineSize = 10;
+        const auto kLeftText = juce::Justification::left;
+
+        // Draw readout background.
+        g.drawImageAt(readoutImage, 510, 2);
 
         g.setColour(juce::Colour(179, 111, 56));
-
         g.setFont(10.0f);
 
-        // draw readout background
-        g.drawImageAt(readout, 510, 2);
-
-        // this is our sufficently sized rectangle
         juce::Rectangle<int> textRect(512, 2, 105, 10 + lineSize);
 
-        const int kLeftText = juce::Justification::left;
-
-        // print text to readout
-        sprintf(text, "y = %.5f", y);
+        snprintf(text, sizeof(text), "y = %.5f", y);
         g.drawText(text, textRect, kLeftText, true);
-        textRect.setY(textRect.getY()+lineSize);
+        textRect.setY(textRect.getY() + lineSize);
 
-        sprintf(text, "y = %.5f dB", cf_lin2db(fabsf(y)));
+        snprintf(text, sizeof(text), "y = %.5f dB", cf_lin2db(std::abs(y)));
         g.drawText(text, textRect, kLeftText, true);
-        textRect.setY(textRect.getY()+lineSize*2);
+        textRect.setY(textRect.getY() + lineSize*2);
 
-        sprintf(text, "x = %.2f samples", x);
+        snprintf(text, sizeof(text), "x = %.2f samples", x);
         g.drawText(text, textRect, kLeftText, true);
-        textRect.setY(textRect.getY()+lineSize);
+        textRect.setY(textRect.getY() + lineSize);
 
-        sprintf(text, "x = %.5f seconds", x / sampleRate);
+        snprintf(text, sizeof(text), "x = %.5f seconds", x / sampleRate);
         g.drawText(text, textRect, kLeftText, true);
-        textRect.setY(textRect.getY()+lineSize);
+        textRect.setY(textRect.getY() + lineSize);
 
-        sprintf(text, "x = %.5f ms", 1000.f * x / sampleRate);
+        snprintf(text, sizeof(text), "x = %.5f ms", 1000.0f * x / sampleRate);
         g.drawText(text, textRect, kLeftText, true);
-        textRect.setY(textRect.getY()+lineSize);
+        textRect.setY(textRect.getY() + lineSize);
 
-        if (x == 0)
-            sprintf(text, "x = infinite Hz");
-        else
-            sprintf(text, "x = %.3f Hz", sampleRate / x);
-
+        if (x == 0.0f) {
+            snprintf(text, sizeof(text), "x = infinite Hz");
+        } else {
+            snprintf(text, sizeof(text), "x = %.3f Hz", sampleRate / x);
+        }
         g.drawText(text, textRect, kLeftText, true);
     }
-
 }

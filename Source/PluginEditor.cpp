@@ -4,19 +4,20 @@
 SmexoscopeAudioProcessorEditor::SmexoscopeAudioProcessorEditor(SmexoscopeAudioProcessor& p) :
     juce::AudioProcessorEditor(&p),
     audioProcessor(p),
-    waveDisplay(audioProcessor.smexoscope, headsImage, readoutImage)
+    effect(audioProcessor.smexoscope),
+    waveDisplay(effect, headsImage, readoutImage)
 {
 //TODO: handle this better
-    timeKnob.setValue(audioProcessor.smexoscope.getParameter(Smexoscope::kTimeWindow));
-    ampKnob.setValue(audioProcessor.smexoscope.getParameter(Smexoscope::kAmpWindow));
-    intTrigSpeedKnob.setValue(audioProcessor.smexoscope.getParameter(Smexoscope::kTriggerSpeed));
-    retrigThreshKnob.setValue(audioProcessor.smexoscope.getParameter(Smexoscope::kTriggerLimit));
-    retrigLevelSlider.setValue(audioProcessor.smexoscope.getParameter(Smexoscope::kTriggerLevel));
-    retriggerModeButton.setValue(audioProcessor.smexoscope.getParameter(Smexoscope::kTriggerType));
-    syncRedrawButton.setValue(audioProcessor.smexoscope.getParameter(Smexoscope::kSyncDraw));
-    freezeButton.setValue(audioProcessor.smexoscope.getParameter(Smexoscope::kFreeze));
-    dcKillButton.setValue(audioProcessor.smexoscope.getParameter(Smexoscope::kDCKill));
-    channelSelectionButton.setValue(audioProcessor.smexoscope.getParameter(Smexoscope::kChannel));
+    timeKnob.setValue(effect.getParameter(Smexoscope::kTimeWindow));
+    ampKnob.setValue(effect.getParameter(Smexoscope::kAmpWindow));
+    intTrigSpeedKnob.setValue(effect.getParameter(Smexoscope::kTriggerSpeed));
+    retrigThreshKnob.setValue(effect.getParameter(Smexoscope::kTriggerLimit));
+    retrigLevelSlider.setValue(effect.getParameter(Smexoscope::kTriggerLevel));
+    retriggerModeButton.setValue(effect.getParameter(Smexoscope::kTriggerType));
+    syncRedrawButton.setValue(effect.getParameter(Smexoscope::kSyncDraw));
+    freezeButton.setValue(effect.getParameter(Smexoscope::kFreeze));
+    dcKillButton.setValue(effect.getParameter(Smexoscope::kDCKill));
+    channelSelectionButton.setValue(effect.getParameter(Smexoscope::kChannel));
 
     // Filmstrip has 5 images but External triggering mode is not implemented.
     retriggerModeButton.setNumStates(4);
@@ -80,19 +81,19 @@ void SmexoscopeAudioProcessorEditor::timerCallback()
 
 void SmexoscopeAudioProcessorEditor::updateParameters()
 {
-    waveDisplay.setEffectParameter(Smexoscope::kTimeWindow, float(timeKnob.getValue()));
-    waveDisplay.setEffectParameter(Smexoscope::kAmpWindow, float(ampKnob.getValue()));
-    waveDisplay.setEffectParameter(Smexoscope::kTriggerSpeed, float(intTrigSpeedKnob.getValue()));
-    waveDisplay.setEffectParameter(Smexoscope::kTriggerLimit, float(retrigThreshKnob.getValue()));
-    waveDisplay.setEffectParameter(Smexoscope::kTriggerType, retriggerModeButton.getValue());
-    waveDisplay.setEffectParameter(Smexoscope::kSyncDraw, syncRedrawButton.getValue());
-    waveDisplay.setEffectParameter(Smexoscope::kFreeze, freezeButton.getValue());
-    waveDisplay.setEffectParameter(Smexoscope::kDCKill, dcKillButton.getValue());
-    waveDisplay.setEffectParameter(Smexoscope::kChannel, channelSelectionButton.getValue());
-    waveDisplay.setEffectParameter(Smexoscope::kTriggerLevel, float(retrigLevelSlider.getValue()));
+    effect.setParameter(Smexoscope::kTimeWindow, float(timeKnob.getValue()));
+    effect.setParameter(Smexoscope::kAmpWindow, float(ampKnob.getValue()));
+    effect.setParameter(Smexoscope::kTriggerSpeed, float(intTrigSpeedKnob.getValue()));
+    effect.setParameter(Smexoscope::kTriggerLimit, float(retrigThreshKnob.getValue()));
+    effect.setParameter(Smexoscope::kTriggerType, retriggerModeButton.getValue());
+    effect.setParameter(Smexoscope::kSyncDraw, syncRedrawButton.getValue());
+    effect.setParameter(Smexoscope::kFreeze, freezeButton.getValue());
+    effect.setParameter(Smexoscope::kDCKill, dcKillButton.getValue());
+    effect.setParameter(Smexoscope::kChannel, channelSelectionButton.getValue());
+    effect.setParameter(Smexoscope::kTriggerLevel, float(retrigLevelSlider.getValue()));
 
 //TODO: not thread safe
-    double sampleRate = audioProcessor.smexoscope.getSampleRate();
+    double sampleRate = effect.getSampleRate();
 
 //TODO: fix warnings
     timeText.setValue(pow(10.f, -timeKnob.getValue()*5.f+1.5));

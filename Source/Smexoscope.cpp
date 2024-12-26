@@ -169,6 +169,7 @@ void Smexoscope::process(juce::AudioBuffer<float>& buffer)
 
         // the counter keeps track of how many samples/pixel we have
         // The speed is determined by the TIME knob.
+        // Essentially we're sampling the signal at a lower rate.
         counter += counterSpeed;
         
         // @ counter
@@ -179,6 +180,9 @@ void Smexoscope::process(juce::AudioBuffer<float>& buffer)
                 int min_Y = int(OSC_CENTER - min * OSC_CENTER) - 1;
 
                 // thanks to David @ Plogue for this interesting hint!
+                // We store both the min and max sample value that we've seen
+                // over the last N samples and will draw a vertical line between
+                // these two values. That's why we store 2 points per sample.
                 peaks[(index << 1)    ].y = lastIsMax ? min_Y : max_Y;
                 peaks[(index << 1) + 1].y = lastIsMax ? max_Y : min_Y;
 
