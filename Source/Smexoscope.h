@@ -5,7 +5,7 @@
 
 /*
   This was CSmartelectronixDisplay in the original code, but that class also
-  functioned as the main plug-in object.
+  functioned as the main plug-in object. Here it only captures the audio.
 */
 class Smexoscope
 {
@@ -57,38 +57,40 @@ public:
     const std::vector<juce::Point<int>>& getCopy() const { return copy; }
 
 protected:
+    // Array containing the waveform readings. The `copy` array is only
+    // updated when the trigger hits and is used in Sync Redraw mode.
     std::vector<juce::Point<int>> peaks;
     std::vector<juce::Point<int>> copy;
 
-    // index into the peak-array
+    // Current write position into the peaks array.
     size_t index;
 
-    // counter which is used to set the amount of samples / pixel
+    // How often we taken a reading, i.e. the amount of samples / pixel.
     double counter;
 
-    // max/min peak in this block
-    float max, min, maxR, minR;
+    // Largest and smallest samples seen in this block.
+    float max, min;
 
-    // the last peak we encountered was a maximum!
+    // Whether the last peak we encountered was a maximum or minimum.
     bool lastIsMax;
 
-    // the previous sample (for edge-triggers)
+    // The previous sample (for edge triggers).
     float previousSample;
 
-    // the internal trigger oscillator
+    // Oscillator used for Internal trigger mode.
     double triggerPhase;
 
-    // This array holds the parameter values.
-    float SAVE[kNumParams];
+    // Counter that limits how soon the trigger may happen again.
+    int triggerLimitPhase;
 
-    // trigger limiter!
-    long triggerLimitPhase;
-
-    // dc killer
+    // DC killer filter state.
     double dcKill, dcFilterTemp;
 
-//TODO: only used by R so can move into prepareToPlay (see also editor)
-    // sample rate
+    // This array holds the parameter values. They're stored in an array so
+    // they can be loaded/saved easily by copying (into) the whole array.
+    float SAVE[kNumParams];
+
+    // Sample rate that was passed into `prepareToPlay`.
     double sampleRate = 44100.0;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Smexoscope)

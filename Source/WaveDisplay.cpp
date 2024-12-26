@@ -153,8 +153,10 @@ void WaveDisplay::paint(juce::Graphics& g)
         float y = (-2.0f * (float(where.y) + 1.0f) / float(OSC_HEIGHT) + 1.0f) / gain;
         float x = float(where.x) * float(counterSpeedInverse);
 
+        char text[64] = { 0 };
         const int lineSize = 10;
         const auto kLeftText = juce::Justification::left;
+        auto sampleRate = effect.getSampleRate();
 
         // Draw readout background.
         g.drawImageAt(readoutImage, 510, 2);

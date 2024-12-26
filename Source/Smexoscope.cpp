@@ -75,8 +75,8 @@ void Smexoscope::process(juce::AudioBuffer<float>& buffer)
     // TODO: parameter mappings
     float gain = powf(10.f, SAVE[kAmpWindow] * 6.f - 3.f);
     float triggerLevel = (SAVE[kTriggerLevel] * 2.f - 1.f);
-    long triggerType = (long)(SAVE[kTriggerType] * kNumTriggerTypes + 0.0001);
-    long triggerLimit = (long)(pow(10.f, SAVE[kTriggerLimit] * 4.f)); // [0=>1 1=>10000
+    int triggerType = int(SAVE[kTriggerType] * kNumTriggerTypes + 0.0001);
+    int triggerLimit = int(pow(10.f, SAVE[kTriggerLimit] * 4.f)); // [0=>1 1=>10000
     double triggerSpeed = pow(10.0, 2.5 * SAVE[kTriggerSpeed] - 5.0);
     double counterSpeed = pow(10.f, -SAVE[kTimeWindow] * 5.f + 1.5); // [0=>10 1=>0.001
     double R = 1.0 - 250.0 / sampleRate;

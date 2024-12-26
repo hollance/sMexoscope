@@ -7,18 +7,6 @@ SmexoscopeAudioProcessorEditor::SmexoscopeAudioProcessorEditor(SmexoscopeAudioPr
     effect(audioProcessor.smexoscope),
     waveDisplay(effect, headsImage, readoutImage)
 {
-//TODO: handle this better
-    timeKnob.setValue(effect.getParameter(Smexoscope::kTimeWindow));
-    ampKnob.setValue(effect.getParameter(Smexoscope::kAmpWindow));
-    intTrigSpeedKnob.setValue(effect.getParameter(Smexoscope::kTriggerSpeed));
-    retrigThreshKnob.setValue(effect.getParameter(Smexoscope::kTriggerLimit));
-    retrigLevelSlider.setValue(effect.getParameter(Smexoscope::kTriggerLevel));
-    retriggerModeButton.setValue(effect.getParameter(Smexoscope::kTriggerType));
-    syncRedrawButton.setValue(effect.getParameter(Smexoscope::kSyncDraw));
-    freezeButton.setValue(effect.getParameter(Smexoscope::kFreeze));
-    dcKillButton.setValue(effect.getParameter(Smexoscope::kDCKill));
-    channelSelectionButton.setValue(effect.getParameter(Smexoscope::kChannel));
-
     // Filmstrip has 5 images but External triggering mode is not implemented.
     retriggerModeButton.setNumStates(4);
 
@@ -37,6 +25,20 @@ SmexoscopeAudioProcessorEditor::SmexoscopeAudioProcessorEditor(SmexoscopeAudioPr
     addAndMakeVisible(dcKillButton, 2);
     addAndMakeVisible(channelSelectionButton, 2);
     addAndMakeVisible(waveDisplay, 1);
+
+    // Load the current parameter values into the controls.
+    // Note: This only works correctly if setStateInformation is called by
+    // the host before the editor window is constructed.
+    timeKnob.setValue(effect.getParameter(Smexoscope::kTimeWindow));
+    ampKnob.setValue(effect.getParameter(Smexoscope::kAmpWindow));
+    intTrigSpeedKnob.setValue(effect.getParameter(Smexoscope::kTriggerSpeed));
+    retrigThreshKnob.setValue(effect.getParameter(Smexoscope::kTriggerLimit));
+    retrigLevelSlider.setValue(effect.getParameter(Smexoscope::kTriggerLevel));
+    retriggerModeButton.setValue(effect.getParameter(Smexoscope::kTriggerType));
+    syncRedrawButton.setValue(effect.getParameter(Smexoscope::kSyncDraw));
+    freezeButton.setValue(effect.getParameter(Smexoscope::kFreeze));
+    dcKillButton.setValue(effect.getParameter(Smexoscope::kDCKill));
+    channelSelectionButton.setValue(effect.getParameter(Smexoscope::kChannel));
 
     setSize(825, 300);
     startTimerHz(30);
@@ -81,6 +83,10 @@ void SmexoscopeAudioProcessorEditor::timerCallback()
 
 void SmexoscopeAudioProcessorEditor::updateParameters()
 {
+    // This function is called from a timer on the UI thread to read the
+    // positions of the knobs and buttons and update the parameter values.
+    // Since this was based on a VST2, all parameters have values between
+    // 0.0f and 1.0f. The parameters are not exposed to the host.
     effect.setParameter(Smexoscope::kTimeWindow, float(timeKnob.getValue()));
     effect.setParameter(Smexoscope::kAmpWindow, float(ampKnob.getValue()));
     effect.setParameter(Smexoscope::kTriggerSpeed, float(intTrigSpeedKnob.getValue()));
