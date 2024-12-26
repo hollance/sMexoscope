@@ -101,9 +101,19 @@ void SmexoscopeAudioProcessorEditor::updateParameters()
 //TODO: not thread safe
     double sampleRate = effect.getSampleRate();
 
-//TODO: fix warnings
-    timeText.setValue(pow(10.f, -timeKnob.getValue()*5.f+1.5));
+    // The TIME knob sets the number of pixels per sample. It ranges from 31.62
+    // pixels per sample to 0.0003162 pixels/sample, which is 3162 samples/pixel.
+    // If the TIME knob is at 0.3 or 30%, there is exactly one pixel per sample.
+    // The default of 0.75 or 75% is ~178 samples per pixel.
+    // The original code had a comment here, `[0=>10 1=>0.001`, so perhaps the
+    // range at some point was from 10 pixels/sample to 1000 samples/pixel.
+    // The formula for that would be `pow(10, 1 - knob*4)` and the knob at 25%
+    // would now be one pixel/sample. Not sure why this got changed.
+    timeText.setValue(float(std::pow(10.0, 1.5 - timeKnob.getValue() * 5.0)));
+
     ampText.setValue(powf(10.f, ampKnob.getValue()*6.f-3.f));
     speedText.setValue(pow(10.0, 2.5*intTrigSpeedKnob.getValue()-5)*sampleRate);
     threshText.setValue(pow(10.f, retrigThreshKnob.getValue()*4.f));
+
+//TODO: fix warnings
 }

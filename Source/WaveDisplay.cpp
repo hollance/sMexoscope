@@ -96,16 +96,16 @@ void WaveDisplay::paint(juce::Graphics& g)
 
     const auto& points = (effect.getParameter(Smexoscope::kSyncDraw) > 0.5f) ? effect.getCopy() : effect.getPeaks();
 
-//TODO what is going on here?
-// when we have fewer readings than fit into the screen, draw interpolated lines
-    // waveform
-    double counterSpeedInverse = pow(10.0f, effect.getParameter(Smexoscope::kTimeWindow) * 5.0f - 1.5f);
-    if (counterSpeedInverse < 1.0) {  //draw interpolated lines!
-        // set color to blue
+    // Calculate the number of samples per pixel, which ranges from 0.03162 to
+    // 3162. For settings of the TIME knob of 30% or less, there is fewer than
+    // one sample per pixel, i.e. we don't have enough readings to fill up the
+    // screen. In that case we draw interpolated lines between the sample points.
+    double samplesPerPixel = std::pow(10.0, effect.getParameter(Smexoscope::kTimeWindow) * 5.0 - 1.5);
+    if (samplesPerPixel < 1.0) {
         g.setColour(juce::Colour(64, 148, 172));  // blue
 
-        double phase = counterSpeedInverse;
-        double dphase = counterSpeedInverse;
+        double phase = samplesPerPixel;
+        double dphase = samplesPerPixel;
 
         double prevxi = points[0].x;
         double prevyi = points[0].y;
@@ -151,7 +151,7 @@ void WaveDisplay::paint(juce::Graphics& g)
         // get x and y coordinates scaled for measurement purposes.
         float gain = powf(10.0f, effect.getParameter(Smexoscope::kAmpWindow) * 6.0f - 3.0f);
         float y = (-2.0f * (float(where.y) + 1.0f) / float(OSC_HEIGHT) + 1.0f) / gain;
-        float x = float(where.x) * float(counterSpeedInverse);
+        float x = float(where.x) * float(samplesPerPixel);
 
         char text[64] = { 0 };
         const int lineSize = 10;

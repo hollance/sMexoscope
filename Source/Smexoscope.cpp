@@ -77,7 +77,13 @@ void Smexoscope::process(juce::AudioBuffer<float>& buffer)
     int triggerType = int(SAVE[kTriggerType] * kNumTriggerTypes + 0.0001);
     int triggerLimit = int(pow(10.f, SAVE[kTriggerLimit] * 4.f)); // [0=>1 1=>10000
     double triggerSpeed = pow(10.0, 2.5 * SAVE[kTriggerSpeed] - 5.0);
-    double counterSpeed = pow(10.f, -SAVE[kTimeWindow] * 5.f + 1.5); // [0=>10 1=>0.001
+
+    // Number of pixels per sample. Same formula as for the TIME knob text.
+    // If the TIME knob is at 30% or higher, counterSpeed will be less than 1.0
+    // and a single pixel describes multiple samples. In that case, we do not
+    // store individual sample readings but the max/min over that range.
+    double counterSpeed = std::pow(10.0, 1.5 - SAVE[kTimeWindow] * 5.0);
+
     double R = 1.0 - 250.0 / sampleRate;
     bool dcOn = SAVE[kDCKill] > 0.5f;
     
@@ -166,9 +172,9 @@ void Smexoscope::process(juce::AudioBuffer<float>& buffer)
             lastIsMax = false;
         }
 
-        // the counter keeps track of how many samples/pixel we have
-        // The speed is determined by the TIME knob.
+        // The counter keeps track of how many pixel/sample we have.
         // Essentially we're sampling the signal at a lower rate.
+        // The speed is determined by the TIME knob. 
         counter += counterSpeed;
         
         // @ counter
