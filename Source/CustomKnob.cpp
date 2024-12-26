@@ -1,11 +1,12 @@
 #include "CustomKnob.h"
 
-CustomKnob::CustomKnob(const juce::Image& image, bool vertical) : filmstrip(image), isVertical(vertical)
+CustomKnob::CustomKnob(const juce::Image& image, bool vertical, double defaultValue) : filmstrip(image), isVertical(vertical)
 {
     setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
     setRange(0.0, 1.0, 0.0);
     setTextBoxStyle(juce::Slider::NoTextBox, false, 90, 0);
     setPopupDisplayEnabled(false, false, this);
+    setDoubleClickReturnValue(true, defaultValue);
 
     if (vertical) {
         dimensions = filmstrip.getWidth();

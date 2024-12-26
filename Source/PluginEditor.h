@@ -32,10 +32,10 @@ private:
     juce::Image onOffImage { juce::ImageCache::getFromMemory(BinaryData::off_on_png, BinaryData::off_on_pngSize) };
     juce::Image sliderImage { juce::ImageCache::getFromMemory(BinaryData::slider_new_png, BinaryData::slider_new_pngSize) };
 
-    CustomKnob timeKnob { knobImage, true };
-    CustomKnob ampKnob { knobImage, true };
-    CustomKnob intTrigSpeedKnob { knobImage, true };
-    CustomKnob retrigThreshKnob { knobImage, true };
+    CustomKnob timeKnob { knobImage, true, 0.75 };
+    CustomKnob ampKnob { knobImage, true, 0.5 };
+    CustomKnob intTrigSpeedKnob { knobImage, true, 0.5 };
+    CustomKnob retrigThreshKnob { knobImage, true, 0.5 };
 
     CustomSlider retrigLevelSlider { sliderImage };
 

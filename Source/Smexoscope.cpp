@@ -3,6 +3,7 @@
 
 Smexoscope::Smexoscope()
 {
+    // Zero out the readings.
     for (size_t j = 0; j < peaks.size(); ++j) {
         juce::Point<int> tmp;
         tmp.x = int(j / 2);
@@ -11,6 +12,7 @@ Smexoscope::Smexoscope()
         copy[j] = tmp;
     }
 
+    // Default parameter values.
     setParameter(kTriggerSpeed, 0.5f);
     setParameter(kTriggerType, 0.0f);
     setParameter(kTriggerLevel, 0.5f);

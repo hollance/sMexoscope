@@ -6,6 +6,7 @@ CustomSlider::CustomSlider(const juce::Image& image) : handleImage(image)
     setRange(0.0, 1.0, 0.0);
     setTextBoxStyle(juce::Slider::NoTextBox, false, 90, 0);
     setPopupDisplayEnabled(false, false, this);
+    setDoubleClickReturnValue(true, 0.5);
 }
 
 void CustomSlider::paint(juce::Graphics& g)

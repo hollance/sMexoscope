@@ -9,7 +9,7 @@
 class CustomKnob : public juce::Slider
 {
 public:
-    CustomKnob(const juce::Image& filmstrip, bool vertical);
+    CustomKnob(const juce::Image& filmstrip, bool vertical, double defaultValue);
 
     void paint(juce::Graphics& g) override;
 
