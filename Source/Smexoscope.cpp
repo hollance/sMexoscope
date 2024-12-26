@@ -69,10 +69,13 @@ void Smexoscope::process(juce::AudioBuffer<float>& buffer)
         samples = buffer.getWritePointer(0);
     }
 
-    int sampleFrames = buffer.getNumSamples();
+    const int sampleFrames = buffer.getNumSamples();
 
-    // TODO: parameter mappings
-    float gain = powf(10.f, SAVE[kAmpWindow] * 6.f - 3.f);
+    // Linear amplification factor between 0.001 (= -60 dB) and 1000 (+60 dB).
+    // Default value is 1.0 or 0 dB gain. Same formula as for the AMP knob text
+    // in the editor window.
+    const float gain = std::powf(10.0f, SAVE[kAmpWindow] * 6.0f - 3.0f);
+
     float triggerLevel = (SAVE[kTriggerLevel] * 2.f - 1.f);
     int triggerType = int(SAVE[kTriggerType] * kNumTriggerTypes + 0.0001);
     int triggerLimit = int(pow(10.f, SAVE[kTriggerLimit] * 4.f)); // [0=>1 1=>10000
@@ -82,10 +85,10 @@ void Smexoscope::process(juce::AudioBuffer<float>& buffer)
     // If the TIME knob is at 30% or higher, counterSpeed will be less than 1.0
     // and a single pixel describes multiple samples. In that case, we do not
     // store individual sample readings but the max/min over that range.
-    double counterSpeed = std::pow(10.0, 1.5 - SAVE[kTimeWindow] * 5.0);
+    const double counterSpeed = std::pow(10.0, 1.5 - SAVE[kTimeWindow] * 5.0);
 
-    double R = 1.0 - 250.0 / sampleRate;
-    bool dcOn = SAVE[kDCKill] > 0.5f;
+    const double R = 1.0 - 250.0 / sampleRate;
+    const bool dcOn = SAVE[kDCKill] > 0.5f;
     
     for (int i = 0; i < sampleFrames; i++) {
         // DC filter. This is a simple high pass filter.

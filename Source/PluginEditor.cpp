@@ -111,7 +111,12 @@ void SmexoscopeAudioProcessorEditor::updateParameters()
     // would now be one pixel/sample. Not sure why this got changed.
     timeText.setValue(float(std::pow(10.0, 1.5 - timeKnob.getValue() * 5.0)));
 
-    ampText.setValue(powf(10.f, ampKnob.getValue()*6.f-3.f));
+    // The AMP knob goes from 0.001 to 1000, with the default of 50% being 1.0.
+    // So this ranges from -60 dB to +60 dB. It is expressed as a linear gain
+    // but with a knob that has a logarithmic scale, so 25% corresponds to -30
+    // dB and 75% to +30 dB. So the knob is really linear in dB.
+    ampText.setValue(float(std::pow(10.0, ampKnob.getValue() * 6.0f - 3.0f)));
+
     speedText.setValue(pow(10.0, 2.5*intTrigSpeedKnob.getValue()-5)*sampleRate);
     threshText.setValue(pow(10.f, retrigThreshKnob.getValue()*4.f));
 
