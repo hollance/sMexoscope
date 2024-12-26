@@ -74,12 +74,21 @@ void Smexoscope::process(juce::AudioBuffer<float>& buffer)
     // Linear amplification factor between 0.001 (= -60 dB) and 1000 (+60 dB).
     // Default value is 1.0 or 0 dB gain. Same formula as for the AMP knob text
     // in the editor window.
-    const float gain = std::powf(10.0f, SAVE[kAmpWindow] * 6.0f - 3.0f);
+    const float gain = std::pow(10.0f, SAVE[kAmpWindow] * 6.0f - 3.0f);
 
-    float triggerLevel = (SAVE[kTriggerLevel] * 2.f - 1.f);
-    int triggerType = int(SAVE[kTriggerType] * kNumTriggerTypes + 0.0001);
-    int triggerLimit = int(pow(10.f, SAVE[kTriggerLimit] * 4.f)); // [0=>1 1=>10000
-    double triggerSpeed = pow(10.0, 2.5 * SAVE[kTriggerSpeed] - 5.0);
+    // Linear level value between -1.0f and 1.0f;
+    const float triggerLevel = SAVE[kTriggerLevel] * 2.0f - 1.0f;
+
+    // Convert the 0-1 float into one of the kTriggerXXX enum values.
+    const int triggerType = int(SAVE[kTriggerType] * kNumTriggerTypes + 0.0001f);
+
+    // This is a number of samples between 1 and 10000.
+    const int triggerLimit = int(std::pow(10.0, SAVE[kTriggerLimit] * 4.0));
+
+    // Increment for the phase of the oscillator for the Internal trigger mode.
+    // Normally the increment is freq/sample rate. This is why the TRIG SPEED
+    // knob multiplies this same value by the sample rate to show the frequency.
+    const double triggerSpeed = std::pow(10.0, SAVE[kTriggerSpeed] * 2.5 - 5.0);
 
     // Number of pixels per sample. Same formula as for the TIME knob text.
     // If the TIME knob is at 30% or higher, counterSpeed will be less than 1.0
@@ -139,7 +148,8 @@ void Smexoscope::process(juce::AudioBuffer<float>& buffer)
         }
         
         // If there's a retrigger, but too fast, kill it.
-        // The trigger limit value is determined by the Retrigger Thres knob.
+        // The trigger limit value is determined by the RETRIGGER THRES knob
+        // and is expressed as a number of samples.
         triggerLimitPhase++;
         if (trigger && triggerLimitPhase < triggerLimit && triggerType != kTriggerFree && triggerType != kTriggerInternal) {
             trigger = false;

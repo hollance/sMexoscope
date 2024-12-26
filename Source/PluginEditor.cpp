@@ -117,8 +117,11 @@ void SmexoscopeAudioProcessorEditor::updateParameters()
     // dB and 75% to +30 dB. So the knob is really linear in dB.
     ampText.setValue(float(std::pow(10.0, ampKnob.getValue() * 6.0f - 3.0f)));
 
-    speedText.setValue(pow(10.0, 2.5*intTrigSpeedKnob.getValue()-5)*sampleRate);
-    threshText.setValue(pow(10.f, retrigThreshKnob.getValue()*4.f));
+    // The INTERNAL TRIG SPEED knob shows the frequency of the oscillator used
+    // for the Internal trigger mode. This setting depends on the sample rate,
+    // which is a little weird.
+    speedText.setValue(float(std::pow(10.0, intTrigSpeedKnob.getValue() * 2.5 - 5.0) * sampleRate));
 
-//TODO: fix warnings
+    // The RETRIGGER THRES knob goes from 1 to 10000. Default is 100.
+    threshText.setValue(float(std::pow(10.0f, retrigThreshKnob.getValue() * 4.0)));
 }
