@@ -52,25 +52,25 @@ void SmexoscopeAudioProcessorEditor::paint(juce::Graphics& g)
 
 void SmexoscopeAudioProcessorEditor::resized()
 {
-    waveDisplay.setBounds(36, 16, 627, 269);
+    waveDisplay.setBounds(38, 16, 627, 269);
 
     timeKnob.setBounds(697, 31, 33, 33);
-    timeText.setBounds(698, 71, 30, 12);
+    timeText.setBounds(696, 71, 34, 12);
 
     ampKnob.setBounds(762, 31, 33, 33);
-    ampText.setBounds(762, 71, 30, 12);
+    ampText.setBounds(760, 71, 34, 12);
 
     retriggerModeButton.setBounds(718, 94, 60, 13);
-    retrigLevelSlider.setBounds(11, 13, 12, 276);
+    retrigLevelSlider.setBounds(11, 13, 12, 275);
 
     intTrigSpeedKnob.setBounds(700, 134, 33, 33);
-    speedText.setBounds(700, 174, 30, 12);
+    speedText.setBounds(698, 174, 34, 12);
 
     retrigThreshKnob.setBounds(765, 134, 33, 33);
-    threshText.setBounds(767, 174, 30, 12);
+    threshText.setBounds(765, 174, 34, 12);
 
-    syncRedrawButton.setBounds(696, 222, 41, 17);
-    freezeButton.setBounds(754, 222, 41, 17);
+    syncRedrawButton.setBounds(696, 221, 41, 17);
+    freezeButton.setBounds(754, 221, 41, 17);
     dcKillButton.setBounds(690, 259, 41, 17);
     channelSelectionButton.setBounds(748, 259, 41, 17);
 }

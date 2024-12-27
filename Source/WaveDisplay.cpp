@@ -167,7 +167,7 @@ void WaveDisplay::paint(juce::Graphics& g)
         const auto sampleRate = effect.getSampleRate();
         juce::Rectangle<int> textRect(512, 2, 105, 10 + lineSize);
 
-        g.drawImageAt(readoutImage, 510, 2);
+        g.drawImageAt(readoutImage, 508, 2);
         g.setColour(juce::Colour(179, 111, 56));
         g.setFont(10.0f);
 

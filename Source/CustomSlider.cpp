@@ -11,7 +11,7 @@ CustomSlider::CustomSlider(const juce::Image& image) : handleImage(image)
 
 void CustomSlider::paint(juce::Graphics& g)
 {
-    int offset = 267 - int(getValue() * 267);
+    int offset = 266 - int(getValue() * 266);
     int width = handleImage.getWidth();
     int height = handleImage.getHeight();
     g.drawImage(handleImage, 0, offset, width, height, 0, 0, width, height);
