@@ -7,7 +7,7 @@ Smexoscope::Smexoscope()
     for (size_t j = 0; j < peaks.size(); ++j) {
         juce::Point<int> tmp;
         tmp.x = int(j / 2);  // store every x-position twice
-        tmp.y = OSC_CENTER - 1;
+        tmp.y = OSC_CENTER;
         peaks[j] = tmp;
         copy[j] = tmp;
     }
@@ -163,7 +163,7 @@ void Smexoscope::process(juce::AudioBuffer<float>& buffer)
         if (trigger) {
             // Zero out the remainder of the peaks array.
             for (size_t j = index * 2; j < peaks.size(); j += 2) {
-                peaks[j].y = peaks[j + 1].y = OSC_CENTER - 1;
+                peaks[j].y = peaks[j + 1].y = OSC_CENTER;
             }
 
             // Copy to a buffer for synced drawing.
@@ -207,8 +207,8 @@ void Smexoscope::process(juce::AudioBuffer<float>& buffer)
                 // have the largest y-position. The original comment said,
                 // "scale here, better than in the graphics thread :-)" but
                 // to me doing it in the graphics thread makes more sense...
-                int max_Y = int(OSC_CENTER - max * OSC_CENTER) - 1;
-                int min_Y = int(OSC_CENTER - min * OSC_CENTER) - 1;
+                int max_Y = int(OSC_CENTER - max * OSC_CENTER);
+                int min_Y = int(OSC_CENTER - min * OSC_CENTER);
 
                 // Store both the min and max sample value that we've seen over
                 // the last N samples. We will draw a vertical line between

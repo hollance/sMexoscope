@@ -73,8 +73,6 @@ void WaveDisplay::mouseUp(const juce::MouseEvent& event)
 
 void WaveDisplay::paint(juce::Graphics& g)
 {
-    // Note: Offset of the waveform display should be (38, 16) pixels.
-
     auto bounds = getLocalBounds();
 
     // Draw a random face because why not.
@@ -89,12 +87,12 @@ void WaveDisplay::paint(juce::Graphics& g)
         // y-coordinate.
         int y = 1 + int((1.0f - effect.getParameter(Smexoscope::kTriggerLevel)) * (bounds.getHeight() - 2));
         g.setColour(juce::Colour(229, 229, 229));
-        g.drawHorizontalLine(y, 0, bounds.getWidth() - 1);
+        g.drawHorizontalLine(y, 0, bounds.getWidth());
     }
 
     // Draw the zero line in orange.
     g.setColour(juce::Colour(179, 111, 56));
-    g.drawLine(0, bounds.getHeight()/2 - 1, bounds.getWidth() - 1, bounds.getHeight()/2 - 1);
+    g.drawHorizontalLine(OSC_CENTER, 0, bounds.getWidth());
 
     // Which array to read from?
     const auto& points = (effect.getParameter(Smexoscope::kSyncDraw) > 0.5f) ? effect.getCopy() : effect.getPeaks();
@@ -113,16 +111,16 @@ void WaveDisplay::paint(juce::Graphics& g)
         double prevxi = points[0].x;
         double prevyi = points[0].y;
 
-        for (int i = 1; i < bounds.getWidth() - 1; ++i) {
+        for (int i = 1; i < bounds.getWidth(); ++i) {
             // Linear interpolation.
-            size_t index = (size_t)phase;
-            double alpha = phase - (double)index;
+            size_t index = size_t(phase);
+            double alpha = phase - double(index);
             double xi = i;
             double yi = (1.0 - alpha) * points[index * 2].y + alpha * points[(index + 1) * 2].y;
 
             // This line is rendered with antialiasing, so it looks different
             // (arguably better?) from the original s(M)exoscope.
-            g.drawLine(float(prevxi), float(prevyi), float(xi), float(yi), 1.0f);
+            g.drawLine(float(prevxi) + 0.5f, float(prevyi) + 0.5f, float(xi) + 0.5f, float(yi) + 0.5f, 1.0f);
             prevxi = xi;
             prevyi = yi;
 
