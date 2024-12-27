@@ -98,9 +98,6 @@ void SmexoscopeAudioProcessorEditor::updateParameters()
     effect.setParameter(Smexoscope::kChannel, channelSelectionButton.getValue());
     effect.setParameter(Smexoscope::kTriggerLevel, float(retrigLevelSlider.getValue()));
 
-//TODO: not thread safe
-    double sampleRate = effect.getSampleRate();
-
     // The TIME knob sets the number of pixels per sample. It ranges from 31.62
     // pixels per sample to 0.0003162 pixels/sample, which is 3162 samples/pixel.
     // If the TIME knob is at 0.3 or 30%, there is exactly one pixel per sample.
@@ -120,7 +117,8 @@ void SmexoscopeAudioProcessorEditor::updateParameters()
     // The INTERNAL TRIG SPEED knob shows the frequency of the oscillator used
     // for the Internal trigger mode. This setting depends on the sample rate,
     // which is a little weird.
-    speedText.setValue(float(std::pow(10.0, intTrigSpeedKnob.getValue() * 2.5 - 5.0) * sampleRate));
+    double triggerSpeed = std::pow(10.0, intTrigSpeedKnob.getValue() * 2.5 - 5.0);
+    speedText.setValue(float(triggerSpeed * effect.getSampleRate()));
 
     // The RETRIGGER THRES knob goes from 1 to 10000. Default is 100.
     threshText.setValue(float(std::pow(10.0f, retrigThreshKnob.getValue() * 4.0)));

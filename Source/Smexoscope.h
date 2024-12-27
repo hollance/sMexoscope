@@ -4,8 +4,8 @@
 #include "Defines.h"
 
 /*
-  This was CSmartelectronixDisplay in the original code, but that class also
-  functioned as the main plug-in object. Here it only captures the audio.
+  This was CSmartelectronixDisplay in the original code, but there the class
+  also functioned as the main plug-in object. Here it only captures the audio.
 */
 class Smexoscope
 {
@@ -53,7 +53,8 @@ public:
 
     double getSampleRate() const { return sampleRate; }
 
-    // The array stores two readings for every pixel in the oscilloscope.
+    // We store two readings for every pixel position in the oscilloscope,
+    // which is why there are `OSC_WIDTH * 2` elements in the array.
     using PeaksArray = std::array<juce::Point<int>, OSC_WIDTH * 2>;
 
     const PeaksArray& getPeaks() const { return peaks; }
@@ -61,23 +62,23 @@ public:
 
 protected:
     // Array containing the waveform readings. The `copy` array is used
-    // for Sync Redraw mode and is only updated when the trigger hits.
+    // for Sync Redraw mode and is only updated when the trigger is hit.
     PeaksArray peaks;
     PeaksArray copy;
 
     // Current write position into the peaks array.
     size_t index;
 
-    // How often we taken a reading, i.e. the amount of samples / pixel.
+    // How often we take a reading, i.e. the number of samples-per-pixel.
     double counter;
 
-    // Largest and smallest samples seen in this block.
+    // Largest and smallest samples seen in the most recent block.
     float max, min;
 
     // Whether the last peak we encountered was a maximum or minimum.
     bool lastIsMax;
 
-    // The previous sample (for edge triggers).
+    // The previous sample, for edge triggers.
     float previousSample;
 
     // Oscillator used for Internal trigger mode.
@@ -90,7 +91,7 @@ protected:
     double dcKill, dcFilterTemp;
 
     // This array holds the parameter values. They're stored in an array so
-    // they can be loaded/saved easily by copying (into) the whole array.
+    // they can be loaded & saved easily by copying (into) the whole array.
     float SAVE[kNumParams];
 
     // Sample rate that was passed into `prepareToPlay`.

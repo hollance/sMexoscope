@@ -3,8 +3,7 @@
 #include <JuceHeader.h>
 
 /*
-  This knob class assumes square knob images, dynamically determining other
-  properties about the filmstrip.
+  This knob class assumes square knob images.
  */
 class CustomKnob : public juce::Slider
 {

@@ -6,7 +6,7 @@ Smexoscope::Smexoscope()
     // Zero out the readings.
     for (size_t j = 0; j < peaks.size(); ++j) {
         juce::Point<int> tmp;
-        tmp.x = int(j / 2);
+        tmp.x = int(j / 2);  // store every x-position twice
         tmp.y = OSC_CENTER - 1;
         peaks[j] = tmp;
         copy[j] = tmp;
@@ -72,11 +72,11 @@ void Smexoscope::process(juce::AudioBuffer<float>& buffer)
     const int sampleFrames = buffer.getNumSamples();
 
     // Linear amplification factor between 0.001 (= -60 dB) and 1000 (+60 dB).
-    // Default value is 1.0 or 0 dB gain. Same formula as for the AMP knob text
+    // Default value is 1.0 = 0 dB gain. Same formula as for the AMP knob text
     // in the editor window.
     const float gain = std::pow(10.0f, SAVE[kAmpWindow] * 6.0f - 3.0f);
 
-    // Linear level value between -1.0f and 1.0f;
+    // Linear level value between -1.0f and 1.0f.
     const float triggerLevel = SAVE[kTriggerLevel] * 2.0f - 1.0f;
 
     // Convert the 0-1 float into one of the kTriggerXXX enum values.
@@ -88,17 +88,20 @@ void Smexoscope::process(juce::AudioBuffer<float>& buffer)
     // Increment for the phase of the oscillator for the Internal trigger mode.
     // Normally the increment is freq/sample rate. This is why the TRIG SPEED
     // knob multiplies this same value by the sample rate to show the frequency.
+    // Might have been easier to make the parameter the frequency and divide by
+    // the sample rate here instead, making the knob independent of sample rate.
     const double triggerSpeed = std::pow(10.0, SAVE[kTriggerSpeed] * 2.5 - 5.0);
 
     // Number of pixels per sample. Same formula as for the TIME knob text.
-    // If the TIME knob is at 30% or higher, counterSpeed will be less than 1.0
-    // and a single pixel describes multiple samples. In that case, we do not
-    // store individual sample readings but the max/min over that range.
+    // If the TIME knob is at 30% or higher, `counterSpeed` will be less than
+    // 1.0 and a single pixel describes multiple samples. In that case, we do
+    // not store individual sample readings but the max/min over that range.
     const double counterSpeed = std::pow(10.0, 1.5 - SAVE[kTimeWindow] * 5.0);
 
+    // Filter coefficient for the DC killer.
     const double R = 1.0 - 250.0 / sampleRate;
     const bool dcOn = SAVE[kDCKill] > 0.5f;
-    
+
     for (int i = 0; i < sampleFrames; i++) {
         // DC filter. This is a simple high pass filter.
         dcKill = samples[i] - dcFilterTemp + R * dcKill;
@@ -147,23 +150,22 @@ void Smexoscope::process(juce::AudioBuffer<float>& buffer)
                 break;
         }
         
-        // If there's a retrigger, but too fast, kill it.
-        // The trigger limit value is determined by the RETRIGGER THRES knob
-        // and is expressed as a number of samples.
+        // If there's a retrigger, but too fast, kill it. The trigger limit
+        // value is determined by the RETRIGGER THRES knob and is expressed
+        // as a number of samples. Only in Rising/Falling modes.
         triggerLimitPhase++;
         if (trigger && triggerLimitPhase < triggerLimit && triggerType != kTriggerFree && triggerType != kTriggerInternal) {
             trigger = false;
         }
 
-        // @ trigger
         if (trigger) {
             // Zero out the remainder of the peaks array.
-            for (size_t j = index * 2; j < OSC_WIDTH * 2; j += 2) {
+            for (size_t j = index * 2; j < peaks.size(); j += 2) {
                 peaks[j].y = peaks[j + 1].y = OSC_CENTER - 1;
             }
 
-            // Copy to a buffer for drawing!
-            for (size_t j = 0; j < OSC_WIDTH * 2; ++j) {
+            // Copy to a buffer for synced drawing.
+            for (size_t j = 0; j < peaks.size(); ++j) {
                 copy[j].y = peaks[j].y;
             }
 
@@ -175,7 +177,9 @@ void Smexoscope::process(juce::AudioBuffer<float>& buffer)
             triggerLimitPhase = 0;
         }
 
-        // @ sample
+        // Keep track of the largest and smallest sample seen since last
+        // writing to the peaks array. Note that `max` and `min` are always
+        // in the range [-1, 1] because we clipped the sample value earlier.
         if (sample > max) {
             max = sample;
             lastIsMax = true;
@@ -185,24 +189,34 @@ void Smexoscope::process(juce::AudioBuffer<float>& buffer)
             lastIsMax = false;
         }
 
-        // The counter keeps track of how many pixel/sample we have.
-        // Essentially we're sampling the signal at a lower rate.
-        // The speed is determined by the TIME knob. 
+        // The counter is used to sample the signal at a lower rate. Every X
+        // samples we'll write a new value into the peaks array. This speed is
+        // determined by the TIME knob.
         counter += counterSpeed;
-        
-        // @ counter
+
+        // Need to store a new reading?
         if (counter >= 1.0) {
+            // For certain trigger modes, there may be more readings between
+            // two successive triggers than fit on the screen, so don't store
+            // more peaks than can fit.
             if (index < OSC_WIDTH) {
-                // scale here, better than in the graphics thread :-)
+                // Scale to the height of the oscilloscope. A larger sample
+                // value has a smaller y-coordinate. Negative sample values
+                // have the largest y-position. The original comment said,
+                // "scale here, better than in the graphics thread :-)" but
+                // to me doing it in the graphics thread makes more sense...
                 int max_Y = int(OSC_CENTER - max * OSC_CENTER) - 1;
                 int min_Y = int(OSC_CENTER - min * OSC_CENTER) - 1;
 
-                // thanks to David @ Plogue for this interesting hint!
-                // We store both the min and max sample value that we've seen
-                // over the last N samples and will draw a vertical line between
+                // Store both the min and max sample value that we've seen over
+                // the last N samples. We will draw a vertical line between
                 // these two values. That's why we store 2 points per sample.
-                peaks[(index << 1)    ].y = lastIsMax ? min_Y : max_Y;
-                peaks[(index << 1) + 1].y = lastIsMax ? max_Y : min_Y;
+                // Thanks to David @ Plogue for this interesting hint!
+                // Might have been easier to create a struct with a y1 & y2
+                // value instead of using a juce::Point, since the x-position
+                // is the same as `index` so we don't need to store that.
+                peaks[index*2    ].y = lastIsMax ? min_Y : max_Y;
+                peaks[index*2 + 1].y = lastIsMax ? max_Y : min_Y;
 
                 index++;
             }
