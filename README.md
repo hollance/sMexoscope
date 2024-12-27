@@ -18,7 +18,7 @@ Note: The External trigger mode is not implemented in this version. The docs men
 
 ## To-do list
 
-- [ ] Make thread-safe. Currently the audio and UI threads are messing with each other's data.
+- [ ] Make thread-safe. The `peaks` array is written to by the audio code and read from the UI thread.
 - [ ] Improve drawing. Stuff seems to be off by a few pixels.
 - [ ] Retina/HiDPI graphics. Resizable UI.
 - [ ] Provide binaries so you don't have to compile this from scratch.

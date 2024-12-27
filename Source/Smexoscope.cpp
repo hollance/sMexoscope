@@ -38,6 +38,10 @@ float Smexoscope::getParameter(int paramIndex) const
 void Smexoscope::prepareToPlay(double newSampleRate)
 {
     sampleRate = newSampleRate;
+
+    // Filter coefficient for the DC killer.
+    R = 1.0 - 250.0 / sampleRate;
+
     reset();
 }
 
@@ -98,8 +102,6 @@ void Smexoscope::process(juce::AudioBuffer<float>& buffer)
     // not store individual sample readings but the max/min over that range.
     const double counterSpeed = std::pow(10.0, 1.5 - SAVE[kTimeWindow] * 5.0);
 
-    // Filter coefficient for the DC killer.
-    const double R = 1.0 - 250.0 / sampleRate;
     const bool dcOn = SAVE[kDCKill] > 0.5f;
 
     for (int i = 0; i < sampleFrames; i++) {

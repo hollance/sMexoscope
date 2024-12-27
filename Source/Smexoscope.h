@@ -48,7 +48,7 @@ public:
     void setParameter(int index, float value);
     float getParameter(int index) const;
 
-    float* getSaveBlock() { return SAVE; }
+    std::atomic<float>* getSaveBlock() { return SAVE; }
     constexpr size_t getSaveBlockSize() { return sizeof(float) * kNumParams; }
 
     double getSampleRate() const { return sampleRate; }
@@ -87,12 +87,13 @@ protected:
     // Counter that limits how soon the trigger may happen again.
     int triggerLimitPhase;
 
-    // DC killer filter state.
-    double dcKill, dcFilterTemp;
+    // DC killer filter state and coefficient.
+    double dcKill, dcFilterTemp, R;
 
     // This array holds the parameter values. They're stored in an array so
     // they can be loaded & saved easily by copying (into) the whole array.
-    float SAVE[kNumParams];
+    // The parameters are atomic since they'll be changed by the UI thread.
+    std::atomic<float> SAVE[kNumParams];
 
     // Sample rate that was passed into `prepareToPlay`.
     double sampleRate = 44100.0;
