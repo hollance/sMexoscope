@@ -9,7 +9,7 @@
               pluginProducesMidiOut="0" pluginIsMidiEffectPlugin="0" pluginEditorRequiresKeys="0"
               pluginAUExportPrefix="sMexoscopeAU" pluginRTASCategory="" aaxIdentifier="com.yourcompany.sMexoscope"
               pluginAAXCategory="2" companyName="Smartelectronix" pluginFormats="buildAU,buildVST3"
-              jucerFormatVersion="1" companyWebsite="github.com/hollance/sMexoscope"
+              jucerFormatVersion="1" companyWebsite="https://github.com/hollance/sMexoscope"
               addUsingNamespaceToJuceHeader="0" buildStandalone="0" enableIAA="0"
               cppLanguageStandard="20">
   <MAINGROUP id="NRqKvS" name="s(M)exoscope">
@@ -55,7 +55,7 @@
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" targetName="s(M)exoscope" recommendedWarnings="LLVM"/>
         <CONFIGURATION name="Release" isDebug="0" targetName="s(M)exoscope" osxCompatibility="10.13 SDK"
-                       osxSDK="default" linkTimeOptimisation="1" macOSDeploymentTarget="10.13"/>
+                       osxSDK="default" linkTimeOptimisation="1" customXcodeFlags="GCC_GENERATE_DEBUGGING_SYMBOLS=YES, DEBUG_INFORMATION_FORMAT=dwarf-with-dsym"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core"/>
