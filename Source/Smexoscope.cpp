@@ -84,7 +84,7 @@ void Smexoscope::process(juce::AudioBuffer<float>& buffer)
     const float triggerLevel = SAVE[kTriggerLevel] * 2.0f - 1.0f;
 
     // Convert the 0-1 float into one of the kTriggerXXX enum values.
-    const int triggerType = int(SAVE[kTriggerType] * kNumTriggerTypes + 0.0001f);
+    const int triggerType = int(SAVE[kTriggerType] * float(kNumTriggerTypes) + 0.0001f);
 
     // This is a number of samples between 1 and 10000.
     const int triggerLimit = int(std::pow(10.0, SAVE[kTriggerLimit] * 4.0));

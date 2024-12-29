@@ -80,19 +80,19 @@ void WaveDisplay::paint(juce::Graphics& g)
     g.drawImage(headsImage, 579, 224, 46, 45, 0, headIndex * (headsImage.getHeight() / 4), 46, 45);
 
     // Draw a grey trigger line when the mode is Rising or Falling.
-    int triggerType = int(effect.getParameter(Smexoscope::kTriggerType) * Smexoscope::kNumTriggerTypes + 0.0001f);
+    int triggerType = int(effect.getParameter(Smexoscope::kTriggerType) * float(Smexoscope::kNumTriggerTypes) + 0.0001f);
     if (triggerType == Smexoscope::kTriggerRising || triggerType == Smexoscope::kTriggerFalling) {
         // The TRIGGER LEVEL is a value between 0.0 and 1.0 where 0.5 is the
         // center. We do `1.0 - level` because a higher level means a smaller
         // y-coordinate.
         int y = 1 + int((1.0f - effect.getParameter(Smexoscope::kTriggerLevel)) * (bounds.getHeight() - 2));
         g.setColour(juce::Colour(229, 229, 229));
-        g.drawHorizontalLine(y, 0, bounds.getWidth());
+        g.drawHorizontalLine(y, 0.0f, float(bounds.getWidth()));
     }
 
     // Draw the zero line in orange.
     g.setColour(juce::Colour(179, 111, 56));
-    g.drawHorizontalLine(OSC_CENTER, 0, bounds.getWidth());
+    g.drawHorizontalLine(OSC_CENTER, 0.0f, float(bounds.getWidth()));
 
     // Which array to read from?
     const auto& points = (effect.getParameter(Smexoscope::kSyncDraw) > 0.5f) ? effect.getCopy() : effect.getPeaks();
@@ -149,8 +149,8 @@ void WaveDisplay::paint(juce::Graphics& g)
     if (where.x != -1) {
         // Draw crosshairs for mouse.
         g.setColour(juce::Colour(10, 10, 10));
-        g.drawHorizontalLine(where.y, 0, bounds.getWidth() - 1);
-        g.drawVerticalLine(where.x, 0, bounds.getHeight() - 1);
+        g.drawHorizontalLine(where.y, 0.0f, float(bounds.getWidth() - 1));
+        g.drawVerticalLine(where.x, 0.0f, float(bounds.getHeight() - 1));
 
         // Get x and y coordinates scaled for measurement purposes.
         float x = float(where.x) * float(samplesPerPixel);
