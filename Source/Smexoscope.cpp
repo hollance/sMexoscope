@@ -214,9 +214,8 @@ void Smexoscope::process(juce::AudioBuffer<float>& buffer)
                 // the last N samples. We will draw a vertical line between
                 // these two values. That's why we store 2 points per sample.
                 // Thanks to David @ Plogue for this interesting hint!
-                // Might have been easier to create a struct with a y1 & y2
-                // value instead of using a juce::Point, since the x-position
-                // is the same as `index` so we don't need to store that.
+                // Might have been easier to create a struct with an y1 & y2
+                // value instead of using a juce::Point.
                 peaks[index*2    ].y = lastIsMax ? min_Y : max_Y;
                 peaks[index*2 + 1].y = lastIsMax ? max_Y : min_Y;
 

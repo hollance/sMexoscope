@@ -20,6 +20,12 @@ Note: The External trigger mode is not implemented in this version. The docs men
 
 - [x] Improve drawing. Stuff seems to be off by a few pixels.
 - [ ] Provide binaries so you don't have to compile this from scratch.
+- [ ] Dark mode. Bram's repo has dark mode images so why not use them!
+- [ ] Click on the text for the AMP knob to switch between linear and decibel display.
+- [ ] Make the INTERNAL TRIG SPEED knob independent of the sample rate.
+- [ ] Instead of simply clipping samples that go outside of visible range, show them in red to indicate they've been clipped.
+- [ ] Use a path to draw the interpolated lines instead of doing the interpolation manually.
+- [ ] Don't store two Point objects per pixel but use a custom struct.
 - [ ] Make thread-safe. The `peaks` array is written to by the audio code and read from the UI thread.
 - [ ] Retina/HiDPI graphics. Resizable UI.
 

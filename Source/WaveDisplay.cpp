@@ -125,6 +125,10 @@ void WaveDisplay::paint(juce::Graphics& g)
             prevyi = yi;
 
             phase += dphase;
+
+            // Note: Rather than doing the linear interpolation ourselves,
+            // it would be a lot easier to just let JUCE draw a path between
+            // the points that fit inside the bounds.
         }
     } else {
         g.setColour(juce::Colour(118, 118, 118));  // grey
