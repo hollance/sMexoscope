@@ -16,7 +16,7 @@ juce_add_plugin(sMexoscope
         PLUGIN_CODE Pjfj                            # A unique four-character plugin id with exactly one upper-case character
         # GarageBand 10.3 requires the first letter to be upper-case, and the remaining letters to be lower-case
         FORMATS AU VST3 Standalone                  # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
-        PRODUCT_NAME "s(M)exoscope")        # The name of the final executable, which can differ from the target name
+        PRODUCT_NAME "sMexoscope")        # The name of the final executable, which can differ from the target name
 
 
 juce_generate_juce_header(sMexoscope)
@@ -42,11 +42,11 @@ target_link_libraries(sMexoscope
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags)
 
-# TODO clap
-#clap_juce_extensions_plugin(TARGET sMexoscope
-#        CLAP_ID "com.smartelectronix.sMexoscope"
-#        CLAP_FEATURES CLAP_PLUGIN_FEATURE_AUDIO_EFFECT "virtual analog" gritty
-#)
+
+clap_juce_extensions_plugin(TARGET sMexoscope
+        CLAP_ID "com.smartelectronix.sMexoscope"
+        CLAP_FEATURES CLAP_PLUGIN_FEATURE_AUDIO_EFFECT "oscilloscope"
+)
 
 if (MSVC)
     target_compile_options(sMexoscope PRIVATE "/W4")

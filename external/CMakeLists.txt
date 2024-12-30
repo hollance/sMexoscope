@@ -16,3 +16,9 @@ CPMAddPackage(
         URL https://github.com/juce-framework/JUCE/archive/refs/tags/8.0.4.tar.gz
 )
 
+message(STATUS "Fetching clap juce extension")
+CPMAddPackage(
+        NAME clap-juce-extension
+        GITHUB_REPOSITORY free-audio/clap-juce-extensions
+        GIT_TAG 24e70f7f7cde2842528bb66ff50260b1dc0f4dae
+)
