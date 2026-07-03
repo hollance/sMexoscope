@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="PJFjzP" name="s(M)exoscope" projectType="audioplug" version="1.0.1"
+<JUCERPROJECT id="PJFjzP" name="sMexoscope" projectType="audioplug" version="1.0.2"
               bundleIdentifier="com.smartelectronix.sMexoscope" includeBinaryInAppConfig="1"
               buildVST="0" buildVST3="1" buildAU="1" buildAUv3="0" buildRTAS="0"
               buildAAX="0" pluginName="s(M)exoscope" pluginDesc="s(M)exoscope"
@@ -12,7 +12,7 @@
               jucerFormatVersion="1" companyWebsite="https://github.com/hollance/sMexoscope"
               addUsingNamespaceToJuceHeader="0" buildStandalone="0" enableIAA="0"
               cppLanguageStandard="20">
-  <MAINGROUP id="NRqKvS" name="s(M)exoscope">
+  <MAINGROUP id="NRqKvS" name="sMexoscope">
     <GROUP id="{E6BB7CD8-CDB9-D7B2-3B94-D9D1B03D3A32}" name="Images">
       <FILE id="ATd6QH" name="blue_knob1_4.png" compile="0" resource="1"
             file="Images/blue_knob1_4.png"/>
@@ -53,9 +53,10 @@
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" isDebug="1" targetName="s(M)exoscope" recommendedWarnings="LLVM"/>
-        <CONFIGURATION name="Release" isDebug="0" targetName="s(M)exoscope" osxCompatibility="10.13 SDK"
-                       osxSDK="default" linkTimeOptimisation="1" customXcodeFlags="GCC_GENERATE_DEBUGGING_SYMBOLS=YES, DEBUG_INFORMATION_FORMAT=dwarf-with-dsym"/>
+        <CONFIGURATION name="Debug" isDebug="1" recommendedWarnings="LLVM"/>
+        <CONFIGURATION name="Release" isDebug="0" osxCompatibility="10.13 SDK" osxSDK="default"
+                       linkTimeOptimisation="1" customXcodeFlags="GCC_GENERATE_DEBUGGING_SYMBOLS=YES, DEBUG_INFORMATION_FORMAT=dwarf-with-dsym"
+                       macOSDeploymentTarget="10.13"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core"/>
@@ -69,6 +70,7 @@
         <MODULEPATH id="juce_audio_formats"/>
         <MODULEPATH id="juce_audio_processors"/>
         <MODULEPATH id="juce_audio_plugin_client"/>
+        <MODULEPATH id="juce_audio_processors_headless" path="../../../../../../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <VS2022 targetFolder="Builds/VisualStudio2022">
@@ -88,6 +90,7 @@
         <MODULEPATH id="juce_graphics" path="../../juce"/>
         <MODULEPATH id="juce_gui_basics" path="../../juce"/>
         <MODULEPATH id="juce_gui_extra" path="../../juce"/>
+        <MODULEPATH id="juce_audio_processors_headless" path="../../../../../../JUCE/modules"/>
       </MODULEPATHS>
     </VS2022>
   </EXPORTFORMATS>
@@ -98,6 +101,8 @@
     <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
             useGlobalPath="1"/>
     <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors_headless" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="1"/>
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
@@ -105,5 +110,5 @@
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
   </MODULES>
-  <JUCEOPTIONS JUCE_QUICKTIME="disabled"/>
+  <JUCEOPTIONS JUCE_QUICKTIME="disabled" JUCE_IGNORE_VST3_MISMATCHED_PARAMETER_ID_WARNING="1"/>
 </JUCERPROJECT>
