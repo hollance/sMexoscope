@@ -14,15 +14,15 @@ See also [my blog post](https://audiodev.blog/smexoscope/) about this plug-in.
 
 :warning: **Use this software at your own risk.** See the [LICENSE](LICENSE.txt) for full details. :warning:
 
+Download **sMexoscope.zip** from the [Releases page](https://github.com/hollance/sMexoscope/releases) and unzip it.
+
 ### Mac
 
 The Mac version of the plug-in is signed and notarized.
 
-1. Download **sMexoscope-Mac.zip** from the [Releases page](https://github.com/hollance/sMexoscope/releases).
-2. In your **Downloads** folder, double-click **sMexoscope-Mac.zip** to unzip the file.
-3. Copy **s(M)exoscope.component** to the folder **/Library/Audio/Plug-Ins/Components**
-4. Copy **s(M)exoscope.vst3** to the folder **/Library/Audio/Plug-Ins/VST3**
-5. In your DAW, look for **Smartelectronix > s(M)exoscope**. You can insert this plug-in on a mono or stereo track.
+1. Copy **sMexoscope.component** to the folder **/Library/Audio/Plug-Ins/Components**
+2. Copy **sMexoscope.vst3** to the folder **/Library/Audio/Plug-Ins/VST3**
+3. In your DAW, look for **Smartelectronix > s(M)exoscope**. You can insert this plug-in on a mono or stereo track.
 
 If the AU version of the plug-in is not visible in your DAW, open **Applications/Utilities/Terminal**. Type the following and press the enter key:
 
@@ -34,10 +34,14 @@ Then restart your DAW. Now the plug-in should be visible. If not, reboot your co
 
 ### Windows
 
-1. Download **sMexoscope-Windows.zip** from the [Releases page](https://github.com/hollance/sMexoscope/releases).
-2. In your **Downloads** folder, right-click **sMexoscope-Windows.zip** and choose **Extract All...** to unzip the file.
-3. Copy **s(M)exoscope.vst3** to the folder **C:\Program Files\Common Files\VST3**
-4. In your DAW, look for **Smartelectronix > s(M)exoscope**. You can insert this plug-in on a mono or stereo track.
+1. Copy **sMexoscope.vst3** to the folder **C:\Program Files\Common Files\VST3**
+2. In your DAW, look for **Smartelectronix > s(M)exoscope**. You can insert this plug-in on a mono or stereo track.
+
+### Linux
+
+1. Copy **sMexoscope.lv2** to the folder **~/.lv2**
+2. Copy **sMexoscope.vst3** to the folder **~/.vst3**
+3. In your DAW, look for **Smartelectronix > s(M)exoscope**. You can insert this plug-in on a mono or stereo track.
 
 ## How to use this plug-in
 
@@ -50,6 +54,14 @@ Notes:
 
 ## Building from source code
 
+First clone the repo:
+
+```bash
+git clone https://github.com/hollance/sMexoscope
+cd sMexoscope
+git submodule update --init --recursive
+```
+
 ### Projucer
 
 Brief instructions:
@@ -57,6 +69,37 @@ Brief instructions:
 - Install JUCE 8 or newer.
 - Open **s(M)exoscope.jucer** in Projucer and export to your IDE.
 - Select the **VST3** or **AU** target and build.
+
+### CMake
+
+On macOS:
+
+```bash
+cmake -B build -G Xcode -D"CMAKE_OSX_ARCHITECTURES=arm64;x86_64"
+```
+
+Then open **build/SMExoscope.xcodeproj** in Xcode and build the VST3 and/or AU targets.
+
+On Windows:
+
+```bash
+cmake -B build -G"Visual Studio 17 2022"
+```
+
+Then open **build/SMExoscope.sln** in Visual Studio and build the VST3 project.
+
+On Linux:
+
+```bash
+cmake -B build-release -G "Ninja Multi-Config" \
+    -DCMAKE_C_COMPILER=/usr/bin/clang \
+    -DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
+    -DCMAKE_CONFIGURATION_TYPES="Release;Debug"
+
+cmake --build build --config Release --target sMexoscope_VST3
+cmake --build build --config Release --target sMexoscope_LV2
+cmake --build build --config Release --target sMexoscope_CLAP
+```
 
 ## To-do list
 
